@@ -211,9 +211,7 @@
 					</div>
 					<div class="btn-frame">
 						<div class="custom-btn" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
-					    <div class="custom-btn" onclick="App.feature.camera.capturePhotoEdit();">Capture Editable Photo</div>
-					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(App.camera_pictureSource.PHOTOLIBRARY);">From Photo Library</div>
-					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(App.camera_pictureSource.SAVEDPHOTOALBUM);">From Photo Album</div>
+					    <div class="custom-btn" onclick="App.feature.camera.openPhotoAlbum();">From Photo Album</div>
 				    </div>
 				    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
 				    <img style="display:none;" id="largeImage" src="" />
@@ -292,7 +290,9 @@
 
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
-					
+					<div class="feature-info">
+						<p id="contact-list">Checking Contacts...</p>
+				    </div>
 				</div>
 			</div>
 			
@@ -436,6 +436,10 @@
 			
 			$("#Accelerometer").on("pageshow", function(e) {
 	            App.feature.accelerometer.startService();
+	        });
+			
+			$("#Contacts").on("pageshow", function(e) {
+	            App.feature.contacts.startService();
 	        });
 			
 			$("#Geolocation").on("pageshow", function(e) {

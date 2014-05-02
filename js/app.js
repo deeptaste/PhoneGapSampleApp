@@ -10,15 +10,8 @@ var App = {
 	"device_uuid": null,
 	"device_cordova": null,
 	
-	"acceleration_xVal": null,
-	"acceleration_yVal": null,
-	"acceleration_zVal": null,
-	"acceleration_timeStamp": null,
-	
 	"camera_pictureSource": null,
-	"camera_destinationType": null, 
-	
-	"geolocation_position": null,
+	"camera_destinationType": null,
     
     "initialize": function () {
 	    console.log("Initializing Apps");
@@ -79,11 +72,6 @@ var App = {
 		App.device_version = device.version;
 		App.device_uuid = device.uuid;
 		App.device_cordova = device.cordova;
-		
-		App.acceleration_xVal = acceleration.x;
-		App.acceleration_yVal = acceleration.y;
-		App.acceleration_zVal = acceleration.z;
-		App.acceleration_timeStamp = new Date(acceleration.timestamp);
 		
 		App.camera_pictureSource = navigator.camera.PictureSourceType;
 		App.camera_destinationType = navigator.camera.DestinationType;
@@ -342,7 +330,7 @@ var App = {
 			},		
 			"onPhotoURISuccess": function(imageURI) {
 				console.log("[App.feature.camera.onPhotoURISuccess]");
-				var largeImage = document.getElementById('largeImage');
+				var largeImage = document.getElementById('img-preview');
 				largeImage.style.display = 'block !important';
 				largeImage.src = imageURI;
 			},
@@ -356,23 +344,12 @@ var App = {
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
 			},
-			"capturePhotoEdit": function() {
-				console.log("[App.feature.camera.capturePhotoEdit]");
-				var options = { 
-						quality: 20, 
-						allowEdit: true,
-						destinationType: App.App.camera_destinationType.DATA_URL,
-                        sourceType: 1,
-                        encodingType: 0
-				};
-				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
-			},
-			"getPhoto": function(source) {
+			"openPhotoAlbum": function() {
 				console.log("[App.feature.camera.getPhoto]");
 				var options = { 
 						quality: 50, 
 						destinationType: App.App.camera_destinationType.FILE_URI,
-						sourceType: source 
+						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoURISuccess, App.data.showError, options);
 			},
@@ -444,8 +421,6 @@ var App = {
 			"startService": function() {
 				console.log("[App.feature.geolocation.startService]");
 				
-				//navigator.notification.alert('Geolocation - lat: ' + position.coords.latitude, null, 'Congratulations', 'Done');
-				
 				if(!App.feature.reachability()){
 			        PGproxy.navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
@@ -456,10 +431,33 @@ var App = {
 			},
 			"stopService": function() {
 				console.log("[App.feature.geolocation.stopService]");
+				
 				if (App.feature.geolocation.watchID != null) {
 			        navigator.geolocation.clearWatch(App.feature.geolocation.watchID);
 			        App.feature.geolocation.watchID = null;
 			    }
+			},
+		},
+		"contacts": {
+			"showContacts": function(contacts) {
+				console.log("[App.feature.contacts.showContacts]");
+				
+				$('#contact-list').html("<strong>" + contacts.length + "</strong> contacts returned.");
+			    for (var i = 0; i < 10 ; i++) {        
+			        if (contacts[i].name && contacts[i].name.formatted) {
+			            $('#contact-list').append("<br/>Contact " + (i+1) + " is <strong>" +
+			                    contacts[i].name.formatted + "</strong>");
+			            break;
+			        }
+			    }
+			},
+			"startService": function() {
+				console.log("[App.feature.contacts.startService]");
+				
+				var obj = new ContactFindOptions();
+			    obj.filter = "";
+			    obj.multiple = true;
+			    navigator.contacts.find([ "displayName", "name" ], contacts_success, contacts_fail, obj);
 			},
 		},
     },
