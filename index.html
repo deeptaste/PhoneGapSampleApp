@@ -438,6 +438,10 @@
 	            App.feature.accelerometer.startService();
 	        });
 			
+			$("#Camera").on("pageshow", function(e) {
+	            App.feature.camera.startService();
+	        });
+			
 			$("#Contacts").on("pageshow", function(e) {
 	            App.feature.contacts.startService();
 	        });

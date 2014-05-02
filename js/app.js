@@ -306,7 +306,7 @@ var App = {
 					}
 				}
 			},
-			"startService": function(acceleration) {
+			"startService": function() {
 				console.log("[App.feature.accelerometer.startService]");
 				var options = { 
 					frequency: 3000 
@@ -322,6 +322,9 @@ var App = {
 			},
 		},
 		"camera": {
+			"startService": function() {
+				console.log("[App.feature.camera.startService]");
+			},
 			"onPhotoDataSuccess": function(imageData) {
 				console.log("[App.feature.camera.onPhotoDataSuccess]");
 				var imgPreview = document.getElementById('img-preview');
@@ -443,10 +446,13 @@ var App = {
 				console.log("[App.feature.contacts.showContacts]");
 				
 				$('#contact-list').html("<strong>" + contacts.length + "</strong> contacts returned.");
+			    
+			    //for (var i = 0; i < contacts.length ; i++) { 
 			    for (var i = 0; i < 10 ; i++) {        
 			        if (contacts[i].name && contacts[i].name.formatted) {
-			            $('#contact-list').append("<br/>Contact " + (i+1) + " is <strong>" +
-			                    contacts[i].name.formatted + "</strong>");
+			            $('#contact-list').append("<br/> []" + (i+1) + "] <strong>" + 
+			            		contacts[i].name.formatted + "</strong>");
+			                    //contacts[i].name.formatted + "</strong> : " + contacts[i].phoneNumbers[0].formatted);
 			            break;
 			        }
 			    }
@@ -454,10 +460,13 @@ var App = {
 			"startService": function() {
 				console.log("[App.feature.contacts.startService]");
 				
-				var obj = new ContactFindOptions();
-			    obj.filter = "";
-			    obj.multiple = true;
-			    navigator.contacts.find([ "displayName", "name" ], contacts_success, contacts_fail, obj);
+				var options = new ContactFindOptions();
+			    options.filter = "";
+			    options.multiple = true;
+			    
+				var fields = [ "displayName", "name"];
+
+			    navigator.contacts.find(fields, showContacts, App.data.showError, options);
 			},
 		},
     },
