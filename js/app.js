@@ -2,18 +2,18 @@
  * @author Diptesh Shrestha
  */
 var App = {
-    "testing_on_desktop": false,
-    "device_name": null,
-    "device_name": null,
-	"device_platform": null,
-	"device_version": null,
-	"device_uuid": null,
-	"device_cordova": null,
+    testing_on_desktop: false,
+    device_name: null,
+    device_name: null,
+	device_platform: null,
+	device_version: null,
+	device_uuid: null,
+	device_cordova: null,
 	
-	"camera_pictureSource": null,
-	"camera_destinationType": null,
+	camera_pictureSource: null,
+	camera_destinationType: null,
     
-    "initialize": function () {
+    initialize: function () {
 	    console.log("Initializing Apps");
 	 	App.bindEvents();
 	},
@@ -64,7 +64,7 @@ var App = {
 		    $.when(deviceReadyDeferred, jqmReadyDeferred).then(App.initPages);
 		});
     },
-    "onDeviceReady": function () {
+    onDeviceReady: function () {
 		console.log("PhoneGap finished loading");
 		
 		App.device_name = device.name;
@@ -76,21 +76,21 @@ var App = {
 		App.camera_pictureSource = navigator.camera.PictureSourceType;
 		App.camera_destinationType = navigator.camera.DestinationType;
 	},
-	"initPages": function () {
+	initPages: function () {
 		console.log("App finished loading");
 		
 		FastClick.attach(document.body);
 	},
-    "data": {
-    	"isNull": function (value) {
+    data: {
+    	isNull: function (value) {
 	    	return value == null ? 0 : ( value[1] || 0 );
 	    },
-	    "isUndefined": function (value) {
+	    isUndefined: function (value) {
 	    	if(typeof(value) === 'undefined') {
 				return '-';
 			}
 	    },
-	    "numLength": function (len, num) {
+	    numLength: function (len, num) {
 	    	var num = '' + num;
 			
 			if (num.length < len) {
@@ -100,56 +100,59 @@ var App = {
 			}
 			return num;
 	    },
-		"showError": function (err) {
+	    roundNumber: function (num, dec) {
+	    	return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+	    },
+		showError: function (err) {
 			console.log("[App.data.showError]");
 			var msg = 'code: ' + err.code + '\n' + 'message: ' + err.message + '\n';
-			PGproxy.navigator.notification.alert(msg, null, 'ERROR', 'OK');
+			navigator.notification.alert(msg, null, 'ERROR', 'OK');
 	    },
     },
-    "feature": {
-    	"reachability": function () {
-			if(PGproxy.navigator.network.connection.type == Connection.NONE || PGproxy.navigator.network.connection.type == Connection.UNKNOWN) {
+    feature: {
+    	reachability: function () {
+			if(navigator.network.connection.type == Connection.NONE || navigator.network.connection.type == Connection.UNKNOWN) {
 		        return false;
 		    }
 		    else {
 		        return true;
 		    }
 		},
-		"deviceInfo": {
-			"showData": function () {
+		deviceInfo: {
+			showData: function () {
 				console.log("[App.feature.deviceInfo.showData]");
-				var element = document.getElementById('deviceProperties');
-				element.innerHTML = '' + 
-					'<label class=\'data-title\'>Device Name:</label> ' + 
-					'<label class=\'data-info\'>' + App.device_name + '</label>' + 
-					'<label class=\'data-title\'>Device Platform:</label> ' + 
-					'<label class=\'data-info\'>' + App.device_platform + '</label>' + 
-					'<label class=\'data-title\'>Device UUID:</label> '     + 
-					'<label class=\'data-info\'>' + App.device_uuid + '</label>' + 
-					'<label class=\'data-title\'>Device Version:</label> '  + 
-					'<label class=\'data-info\'>' + App.device_version + '</label>' + 
-					'<label class=\'data-title\'>Cordova Version:</label> '  + 
-					'<label class=\'data-info\'>' + App.device_cordova + '</label>';
+				
+				document.getElementById('device-status-bar').setAttribute('style', 'display: none !important;');
+				
+				document.getElementById('device-name').innerHTML = App.device_name;
+				document.getElementById('device-uuid').innerHTML = App.device_uuid;
+				document.getElementById('device-platform').innerHTML = App.device_platform;
+				document.getElementById('device-version').innerHTML = App.device_version;
+				document.getElementById('device-cordova').innerHTML = App.device_cordova;
+				
+				document.getElementById('device-details').setAttribute('style', 'display: block !important;');
 			},
 		},
-		"accelerometer": {
-			"watchID": null,
-			"showData": function(acceleration) {
+		accelerometer: {
+			watchID: null,
+			
+			showData: function(acceleration) {
 				console.log("[App.feature.accelerometer.showData]");
 				var xVal = acceleration.x;
 				var yVal = acceleration.y;
 				var zVal = acceleration.z;
-				var element = document.getElementById('accelerometer-details');
 				var d = new Date(acceleration.timestamp);
 				var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
 				date += ' ' + d.getHours() + ':' + App.data.numLength(2, d.getMinutes()) + ':' + App.data.numLength(2, d.getSeconds());
 				
-				element.innerHTML = '' + 
-					'<table class=\'tbl-info\'>' +
-					'<tr><th>Acceleration X</th><td>: ' + xVal + '</td></tr>' +
-					'<tr><th>Acceleration Y</th><td>: ' + yVal + '</td></tr>' +
-					'<tr><th>Acceleration Z</th><td>: ' + zVal + '</td></tr>' + 
-					'<tr><th>Timestamp</th><td>: ' + date + '</td></tr></table>';
+				document.getElementById('accelerometer-status-bar').setAttribute('style', 'display: none !important;');
+				
+				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 3);
+				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 3);
+				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 3);
+				document.getElementById('date').innerHTML = date;
+				
+				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
 					
 				var cell1 = document.getElementById('cell1');
 				var cell2 = document.getElementById('cell2');
@@ -306,14 +309,16 @@ var App = {
 					}
 				}
 			},
-			"startService": function() {
+			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
 				var options = { 
-					frequency: 3000 
+					frequency: 1000 
 				};
-				App.feature.accelerometer.watchID = navigator.accelerometer.watchAcceleration(App.feature.accelerometer.showData, App.data.showError, options);
+				if (!App.feature.accelerometer.watchID) {
+					App.feature.accelerometer.watchID = navigator.accelerometer.watchAcceleration(App.feature.accelerometer.showData, App.data.showError, options);
+				}
 			},
-			"stopService": function() {
+			stopService: function() {
 				console.log("[App.feature.accelerometer.stopService]");
 				if (App.feature.accelerometer.watchID) {
 					navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
@@ -321,46 +326,46 @@ var App = {
 				}
 			},
 		},
-		"camera": {
-			"startService": function() {
+		camera: {
+			startService: function() {
 				console.log("[App.feature.camera.startService]");
 			},
-			"onPhotoDataSuccess": function(imageData) {
+			onPhotoDataSuccess: function(imageData) {
 				console.log("[App.feature.camera.onPhotoDataSuccess]");
 				var imgPreview = document.getElementById('img-preview');
 				imgPreview.style.display = 'block !important';
+    			imgPreview.style.visibility = 'visible';
 				imgPreview.src = "data:image/jpeg;base64," + imageData;
 			},		
-			"onPhotoURISuccess": function(imageURI) {
+			onPhotoURISuccess: function(imageURI) {
 				console.log("[App.feature.camera.onPhotoURISuccess]");
-				var largeImage = document.getElementById('img-preview');
-				largeImage.style.display = 'block !important';
-				largeImage.src = imageURI;
+				var imgPreview = document.getElementById('img-preview');
+				imgPreview.style.display = 'block !important';
+    			imgPreview.style.visibility = 'visible';
+	    		imgPreview.src = imageURI;
 			},
-			"capturePhoto": function() {
+			capturePhoto: function() {
 				console.log("[App.feature.camera.capturePhoto]");
 				var options = { 
-						quality: 50, 
-						destinationType: App.camera_destinationType.DATA_URL,
-                        sourceType: 1,      // 0:Photo Library, 1=Camera, 2=Saved Album
-                        encodingType: 0     // 0=JPG 1=PNG
+						quality: 30, 
+						destinationType: App.camera_destinationType.DATA_URL
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
 			},
-			"openPhotoAlbum": function() {
+			openPhotoAlbum: function() {
 				console.log("[App.feature.camera.getPhoto]");
 				var options = { 
-						quality: 50, 
+						quality: 30, 
 						destinationType: App.App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoURISuccess, App.data.showError, options);
 			},
 		},
-		"geolocation": {
-			"watchID": null,
+		geolocation: {
+			watchID: null,
 			
-			"createMarker": function(map, placeLoc, desc) {
+			createMarker: function(map, placeLoc, desc) {
 				console.log("[App.feature.geolocation.createMarker]");
 				var marker = new google.maps.Marker({
 					map : map,
@@ -377,7 +382,7 @@ var App = {
 				
 				return marker;
 			},
-			"showMap": function(position) {
+			showMap: function(position) {
 				console.log("[App.feature.geolocation.showMap]");
 				var lat = position.coords.latitude;
 				var lng = position.coords.longitude;
@@ -396,7 +401,7 @@ var App = {
 				iconFile = 'css/images/green-dot.png';
 				homeMarker.setIcon(iconFile);
 			},
-			"showData": function(position) {
+			showData: function(position) {
 				console.log("[App.feature.geolocation.showData]");
 				
 				var lat = position.coords.latitude;
@@ -407,32 +412,32 @@ var App = {
 				var hed = position.coords.heading;
 				var spd = position.coords.speed;
 				
-				var geoInfo = document.getElementById('geolocation-details');
+				document.getElementById('geolocation-status-bar').setAttribute('style', 'display: none !important;');
+
+				document.getElementById('lat').innerHTML = lat;
+				document.getElementById('lng').innerHTML = lng;
+				document.getElementById('alt').innerHTML = alt;
+				document.getElementById('acc').innerHTML = acc;
+				document.getElementById('alc').innerHTML = alc;
+				document.getElementById('hed').innerHTML = hed;
+				document.getElementById('spd').innerHTML = App.data.isNull(spd);
 				
-				geoInfo.innerHTML = '' + 
-					'<table class=\'tbl-info\'>' +
-					'<tr><th>Latitude</th><td>: ' + lat + '</td></tr>' +
-					'<tr><th>Longitude</th><td>: ' + lng + '</td></tr>' +
-					'<tr><th>Altitude</th><td>: ' + alt + '</td></tr>' +
-					'<tr><th>Accuracy</th><td>: ' + acc + '</td></tr>' +
-					'<tr><th>Altitude Accuracy</th><td>: ' + alc + '</td></tr>' +
-					'<tr><th>Heading</th><td>: ' + hed + '</td></tr>' +
-					'<tr><th>Speed</th><td>: ' + App.data.isNull(spd) + '</td></tr></table>';
+				document.getElementById('geolocation-details').setAttribute('style', 'display: block !important;');
 				
 				App.feature.geolocation.showMap(position);
 			},
-			"startService": function() {
+			startService: function() {
 				console.log("[App.feature.geolocation.startService]");
 				
 				if(!App.feature.reachability()){
-			        PGproxy.navigator.notification.alert('No internet connection available', null, '', 'OK');
+			        navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
 			    	var options = { frequency: 3000, maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
 			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
 			    }
 			},
-			"stopService": function() {
+			stopService: function() {
 				console.log("[App.feature.geolocation.stopService]");
 				
 				if (App.feature.geolocation.watchID != null) {
@@ -441,90 +446,40 @@ var App = {
 			    }
 			},
 		},
-		"contacts": {
-			"showContacts": function(contacts) {
+		contacts: {
+			showContacts: function(contacts) {
 				console.log("[App.feature.contacts.showContacts]");
+				alert('4');
 				
-				$('#contact-list').html("<strong>" + contacts.length + "</strong> contacts returned.");
+				$('#contact-list').html("<strong>" + contacts.length + "</strong> contacts returned.<br/>");
+			    alert('5');
 			    
 			    //for (var i = 0; i < contacts.length ; i++) { 
 			    for (var i = 0; i < 10 ; i++) {        
 			        if (contacts[i].name && contacts[i].name.formatted) {
 			            $('#contact-list').append("<br/> []" + (i+1) + "] <strong>" + 
-			            		contacts[i].name.formatted + "</strong>");
-			                    //contacts[i].name.formatted + "</strong> : " + contacts[i].phoneNumbers[0].formatted);
+		            		contacts[i].name.formatted + "</strong>");
+		                    //contacts[i].name.formatted + "</strong> : " + contacts[i].phoneNumbers[0].formatted);
 			            break;
 			        }
 			    }
 			},
-			"startService": function() {
+			startService: function() {
 				console.log("[App.feature.contacts.startService]");
 				
+				alert('1');
 				var options = new ContactFindOptions();
 			    options.filter = "";
 			    options.multiple = true;
-			    
+			    alert('2');
 				var fields = [ "displayName", "name"];
+				
+				alert('3');
 
-			    navigator.contacts.find(fields, showContacts, App.data.showError, options);
+			    navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
 			},
 		},
     },
-};
-
-// emulate PhoneGap for testing on Chrome
-var PGproxy = {
-    "navigator": {
-        "connection": function () {
-            if (navigator.connection) {
-                return navigator.connection;
-            } 
-            else {
-                console.log('navigator.connection');
-                return {
-                    "type":"WIFI" // Avoids errors on Chrome
-                };
-            }
-        },
-        "network": {
-        	"connection": {
-        		"type": function () {
-        			if(navigator.network.connection.type) {
-        				return navigator.network.connection.type;
-        			}
-        			else {
-        				console.log('navigator.network.connection.type');
-        			}
-        		},
-        	}
-        },
-        "notification": {
-            "vibrate": function (a) {
-                if (navigator.notification && navigator.notification.vibrate) {
-                    navigator.notification.vibrate(a);
-                } else {
-                    console.log("navigator.notification.vibrate");
-                }
-            },
-            "alert": function (a, b, c, d) {
-                if (navigator.notification && navigator.notification.alert) {
-                    navigator.notification.alert(a, b, c, d);
-                } else {
-                    console.log("navigator.notification.alert");
-                    alert(a);
-                }
-            }
-        },
-        "splashscreen": {
-            "hide": function () {
-                if (navigator.splashscreen) {
-                    navigator.splashscreen.hide();
-                } else {
-                    console.log('navigator.splashscreen.hide');
-                }
-            }
-        },
-    }
 };
 
 $(document).on('pageshow', '#home', function(){  
@@ -535,10 +490,10 @@ $(document).on('pageshow', '#home', function(){
 		var pWord = $('#password').val();
 		
 		if(uName.length > 0 && pWord.length > 0) {
-			PGproxy.navigator.notification.alert('Processing...', null, '', 'OK');
+			navigator.notification.alert('Processing...', null, '', 'OK');
 			
 			if(!App.feature.reachability()){
-		        PGproxy.navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+		        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
 		    }
 		    else{
 		    	$.ajax({
@@ -551,16 +506,16 @@ $(document).on('pageshow', '#home', function(){
 				    jsonp			: "callback",
 				    jsonpCallback	: "jsonpCallbackfunction",
 				    success    		: function(data) {
-				    	PGproxy.navigator.notification.alert(data, null, '', 'OK');
+				    	navigator.notification.alert(data, null, '', 'OK');
 				    },
 				    error      		: function(xhr, ajaxOptions, thrownErrorw) {
-				        PGproxy.navigator.notification.alert('Some error occurred. Please try again later.', null, 'ERROR', 'OK');           
+				        navigator.notification.alert('Some error occurred. Please try again later.', null, 'ERROR', 'OK');           
 				    }
 				});
 		    }
 		}
 		else {
-			PGproxy.navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'Login');
+			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'Login');
 		}
 	});
 	
@@ -573,10 +528,10 @@ $(document).on('pageshow', '#home', function(){
 		
 		if(uName.length > 0 && pWord.length > 0 && eMail.length > 0) {
 			if(pWord == cWord) {
-				PGproxy.navigator.notification.alert('Processing...', null, '', 'OK');
+				navigator.notification.alert('Processing...', null, '', 'OK');
 				
 				if(!App.feature.reachability()){
-			        PGproxy.navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+			        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
 			    }
 			    else{
 			    	$.ajax({
@@ -591,20 +546,20 @@ $(document).on('pageshow', '#home', function(){
 					    jsonp			: "callback",
 					    jsonpCallback	: "jsonpCallbackfunction",
 					    success    		: function(data) {
-					    	PGproxy.navigator.notification.alert(data, null, '', 'OK');
+					    	navigator.notification.alert(data, null, '', 'OK');
 					    },
 					    error      		: function(xhr, ajaxOptions, thrownErrorw) {
-					        PGproxy.navigator.notification.alert('Some error occurred. Please try again later.', null, '', 'OK');        
+					        navigator.notification.alert('Some error occurred. Please try again later.', null, '', 'OK');        
 					    }
 					});
 			    }
 		    }
 			else {
-				PGproxy.navigator.notification.alert('Password does not match.', null, 'ERROR', 'OK');
+				navigator.notification.alert('Password does not match.', null, 'ERROR', 'OK');
 			}
 		}
 		else {
-			PGproxy.navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'OK');
+			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'OK');
 		}
 	});
 });

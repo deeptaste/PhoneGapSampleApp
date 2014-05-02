@@ -113,7 +113,19 @@
 
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
-					<p id="deviceProperties">Loading device properties...</p>
+					<p id="device-status-bar">Loading device properties...</p>
+					<p id="device-details" style="display: none;">
+						<label class="data-title">Device Name:</label>
+						<label class="data-info" id="device-name">&nbsp;</label>
+						<label class="data-title">Device UUID:</label>
+						<label class="data-info" id="device-uuid">&nbsp;</label> 
+						<label class="data-title">Device Platform:</label>
+						<label class="data-info" id="device-platform">&nbsp;</label>  
+						<label class="data-title">OS Version:</label>
+						<label class="data-info" id="device-version">&nbsp;</label> 
+						<label class="data-title">Cordova Version:</label>
+						<label class="data-info" id="device-cordova">&nbsp;</label>	
+					</p>
 				</div>
 			</div>
 			
@@ -167,10 +179,18 @@
 						</table>
 					</div>
 					<div class="feature-info">
-						<p id="accelerometer-details">Waiting for accelerometer...</p>
+						<p id="accelerometer-status-bar">Waiting for accelerometer...</p>
+						<table id="accelerometer-details" style="display: none;" class="tbl-info"> 
+							<tr><th>X : </th><td id="xVal">&nbsp;</td></tr> 
+							<tr><th>Y : </th><td id="yVal">&nbsp;</td></tr> 
+							<tr><th>Z : </th><td id="zVal">&nbsp;</td></tr>  
+							<tr><th>Timestamp : </th><td id="date">&nbsp;</td></tr>
+						</table>
+						
 				    </div>
 				    <div class="btn-frame">
-						<div class="custom-btn" onclick="stopAccelerometer();">Stop Accelerometer</div>
+						<div class="custom-btn" onclick="App.feature.accelerometer.startService();">Start Accelerometer</div>
+						<div class="custom-btn" onclick="App.feature.accelerometer.stopService();">Stop Accelerometer</div>
 				    </div>
 				</div>
 			</div>
@@ -207,14 +227,12 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div class="img-frame">
-						<div class="img-preview"><label>Picture Preview</label></div>
+						<img id="img-preview" src="" />
 					</div>
 					<div class="btn-frame">
 						<div class="custom-btn" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
 					    <div class="custom-btn" onclick="App.feature.camera.openPhotoAlbum();">From Photo Album</div>
 				    </div>
-				    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
-				    <img style="display:none;" id="largeImage" src="" />
 				</div>
 			</div>
 			
@@ -251,7 +269,16 @@
 				<div class="main-frame">
 					<div id="map-frame"><label>Map</label></div>
 					<div class="feature-info">
-						<p id="geolocation-details">Finding geolocation...</p>
+						<p id="geolocation-status-bar">Finding location...</p>
+						<table id="geolocation-details" style="display: none;" class="tbl-info"> 
+							<tr><th>Latitude : </th><td id="lat">&nbsp;</td></tr> 
+							<tr><th>Longitude : </th><td id="lng">&nbsp;</td></tr> 
+							<tr><th>Altitude : </th><td id="alt">&nbsp;</td></tr>  
+							<tr><th>Accuracy : </th><td id="acc">&nbsp;</td></tr>  
+							<tr><th>Altitude Accuracy : </th><td id="alc">&nbsp;</td></tr> 
+							<tr><th>Heading : </th><td id="hed">&nbsp;</td></tr>  
+							<tr><th>Speed : </th><td id="spd">&nbsp;</td></tr>
+						</table>
 				    </div>
 				    <div class="btn-frame">
 						<div class="custom-btn" onclick="stopGeolocation();">Stop Geolocation Watch</div>
