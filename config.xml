@@ -8,10 +8,10 @@
 		version   		= "1.3.1"
         versionCode 	= "10" >
 
-    <name>PhoneGap Demo Mobile Application</name>
+    <name>My Demo Mobile App</name>
 
     <description>
-        This mobile app test some of the mobile device features such as Accelerometer, Camera, Geolocation, and others. Also, the client-server architecture has been implemented for login and some other features.
+        This is a demo cross-platform mobile application built using 'Apache Cordova' and 'jQuery Mobile'. This mobile app test some of the mobile device features such as Accelerometer, Camera, Geolocation, and others. Also, the client-server architecture has been implemented for login and some other features.
     </description>
 
     <author href="http://uwl.ac.uk" email="diptesh.shrestha@gmail.com">

@@ -427,8 +427,6 @@ var App = {
 				var hed = position.coords.heading;
 				var spd = position.coords.speed;
 				
-				alert(lat);
-				
 				var geoInfo = document.getElementById('geolocation-details');
 				
 				geoInfo.innerHTML = '' + 
@@ -448,15 +446,11 @@ var App = {
 				
 				//navigator.notification.alert('Geolocation - lat: ' + position.coords.latitude, null, 'Congratulations', 'Done');
 				
-				alert('1');				
-				
 				if(!App.feature.reachability()){
-			        alert('2');
 			        PGproxy.navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
-			    	alert('3');
-			    	var options = { enableHighAccuracy: true };
+			    	var options = { frequency: 3000, maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
 			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
 			    }
 			},

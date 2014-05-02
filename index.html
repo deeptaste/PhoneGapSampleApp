@@ -212,8 +212,8 @@
 					<div class="btn-frame">
 						<div class="custom-btn" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
 					    <div class="custom-btn" onclick="App.feature.camera.capturePhotoEdit();">Capture Editable Photo</div>
-					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</div>
-					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</div>
+					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(App.camera_pictureSource.PHOTOLIBRARY);">From Photo Library</div>
+					    <div class="custom-btn" onclick="App.feature.camera.getPhoto(App.camera_pictureSource.SAVEDPHOTOALBUM);">From Photo Album</div>
 				    </div>
 				    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
 				    <img style="display:none;" id="largeImage" src="" />
@@ -436,10 +436,6 @@
 			
 			$("#Accelerometer").on("pageshow", function(e) {
 	            App.feature.accelerometer.startService();
-	        });
-	        
-	        $("#Camera").on("pageshow", function(e) {
-	            App.feature.camera.startService();
 	        });
 			
 			$("#Geolocation").on("pageshow", function(e) {
