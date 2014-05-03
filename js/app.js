@@ -180,8 +180,8 @@ var App = {
 				
 				var acc = App.feature.accelerometer;
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-				acc.xPos += -1*(xVal * 1.5);
-			    acc.yPos += (yVal * 1.5);
+				acc.xPos += (-1*(xVal * 1.5))/2;
+			    acc.yPos += (yVal * 1.5)/2;
 			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
 			},
 			startService: function() {
@@ -190,6 +190,8 @@ var App = {
 				var acc = App.feature.accelerometer;
 				acc.oCan = document.getElementById('myCanvas');
 				acc.oCanTwoD = acc.oCan.getContext("2d");
+				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+				
 				acc.oCanWt = acc.oCan.width;
 				acc.oCanHt = acc.oCan.height;
 				
@@ -206,7 +208,7 @@ var App = {
 				*/
 		      	
 		      	var options = { 
-					frequency: 25
+					frequency: 100
 				};
 				if (!acc.watchID) {
 					acc.watchID = navigator.accelerometer.watchAcceleration(acc.showData, App.data.showError, options);
@@ -236,29 +238,31 @@ var App = {
 			onPhotoDataSuccess: function(imageData) {
 				console.log("[App.feature.camera.onPhotoDataSuccess]");
 				var imgPreview = document.getElementById('img-preview');
-				imgPreview.style.display = 'block !important';
+				imgPreview.style.display = 'block';
     			imgPreview.style.visibility = 'visible';
 				imgPreview.src = "data:image/jpeg;base64," + imageData;
 			},		
 			onPhotoURISuccess: function(imageURI) {
 				console.log("[App.feature.camera.onPhotoURISuccess]");
 				var imgPreview = document.getElementById('img-preview');
-				imgPreview.style.display = 'block !important';
+				imgPreview.style.display = 'block';
     			imgPreview.style.visibility = 'visible';
 	    		imgPreview.src = imageURI;
 			},
 			capturePhoto: function() {
 				console.log("[App.feature.camera.capturePhoto]");
 				var options = { 
-						quality: 30, 
-						destinationType: App.camera_destinationType.DATA_URL
+						quality: 5, 
+						destinationType: App.camera_destinationType.DATA_URL,encodingType: Camera.EncodingType.JPEG,
+						targetWidth: 200,
+						saveToPhotoAlbum: true
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
 			},
 			openPhotoAlbum: function() {
 				console.log("[App.feature.camera.getPhoto]");
 				var options = { 
-						quality: 30, 
+						quality: 50, 
 						destinationType: App.App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
@@ -273,6 +277,8 @@ var App = {
 				var marker = new google.maps.Marker({
 					map : map,
 					position : placeLoc,
+					zIndex: 90,
+					optimized: false,
 					title: desc
 				});
 				
@@ -296,7 +302,7 @@ var App = {
 				var map = new google.maps.Map(mapFrame, {
 					mapTypeId : google.maps.MapTypeId.ROADMAP,
 					center : curLocation,
-					zoom : 11
+					zoom : 14
 				});
 				
 				var homeMarker = App.feature.geolocation.createMarker(map, curLocation, "YOU ARE HERE");
@@ -336,7 +342,7 @@ var App = {
 			        navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
-			    	var options = { frequency: 3000, maximumAge: 5000, timeout: 5000, enableHighAccuracy: true };
+			    	var options = { frequency: 10000, enableHighAccuracy: true };
 			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
 			    }
 			},
