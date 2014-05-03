@@ -178,11 +178,12 @@ var App = {
 				
 				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
 				
-				var acc = App.feature.accelerometer;
+				var acc = App.feature.accelerometer; 
+				acc.oCan.width = acc.oCan.width; 
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-				acc.xPos += (-1*(xVal * 1.5))/10;
-			    acc.yPos += (yVal * 1.5)/10;
-			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
+				acc.xPos += (-1*(xVal * 1.5))/5;
+			    acc.yPos += (yVal * 1.5)/5;
+			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -190,23 +191,22 @@ var App = {
 				var acc = App.feature.accelerometer;
 				acc.oCan = document.getElementById('myCanvas');
 				acc.oCanTwoD = acc.oCan.getContext("2d");
+				acc.oCan.width = acc.oCan.width; 
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
 				
 				acc.oCanWt = acc.oCan.width;
 				acc.oCanHt = acc.oCan.height;
 				
 				acc.oImg = new Image();
-		      	acc.oImg.src = "css/images/blue-round-ball.png";
+				acc.oImg.src = "css/images/blue-round-ball.png";
+		      	acc.oImg.width = 45 + 'px';
+				acc.oImg.Height = 45 + 'px';
+		      	
 		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
 		      	
-				/*
-				acc.oImg.onload = function()
-				{
-					acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
-				};
-				*/
-		      	
+				acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
+				
 		      	var options = { 
 					frequency: 100
 				};
@@ -240,11 +240,11 @@ var App = {
 				
 				var imgFrame = document.getElementById('img-frame');
 				var iWt = imgFrame.width - 2;
-				var iHt = imgFrame.width - 2;
+				var iHt = imgFrame.Height - 2;
 				var imgPreview = document.getElementById('img-preview');
 				
-				imgPreview.width = iWt +"px";
-				imgPreview.width = iHt +"px";
+				imgPreview.width = iWt + "px";
+				imgPreview.Height = iHt + "px";
 				imgPreview.style.display = 'block';
     			imgPreview.style.visibility = 'visible';
 				imgPreview.src = "data:image/jpeg;base64," + imageData;
@@ -350,7 +350,7 @@ var App = {
 			        navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
-			    	var options = { frequency: 10000, enableHighAccuracy: true };
+			    	var options = { frequency: 5000, enableHighAccuracy: true };
 			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
 			    }
 			},
@@ -392,7 +392,7 @@ var App = {
 			    options.filter = "";
 			    options.multiple = true;
 			    
-			    var fields = ["displayName", "name"];
+			    var fields = ["displayName", "name", "phoneNumbers"];
 				navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
 			},
 		},
