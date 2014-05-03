@@ -3,8 +3,7 @@
  */
 var App = {
     testing_on_desktop: false,
-    device_name: null,
-    device_name: null,
+    device_model: null,
 	device_platform: null,
 	device_version: null,
 	device_uuid: null,
@@ -67,7 +66,7 @@ var App = {
     onDeviceReady: function () {
 		console.log("PhoneGap finished loading");
 		
-		App.device_name = device.name;
+		App.device_model = device.model;
 		App.device_platform = device.platform;
 		App.device_version = device.version;
 		App.device_uuid = device.uuid;
@@ -124,7 +123,7 @@ var App = {
 				
 				document.getElementById('device-status-bar').setAttribute('style', 'display: none !important;');
 				
-				document.getElementById('device-name').innerHTML = App.device_name;
+				document.getElementById('device-model').innerHTML = App.device_model;
 				document.getElementById('device-uuid').innerHTML = App.device_uuid;
 				document.getElementById('device-platform').innerHTML = App.device_platform;
 				document.getElementById('device-version').innerHTML = App.device_version;
@@ -150,7 +149,7 @@ var App = {
 				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 3);
 				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 3);
 				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 3);
-				document.getElementById('date').innerHTML = date;
+				document.getElementById('date').innerHTML = date + ' (wathing)';
 				
 				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
 					
@@ -320,9 +319,18 @@ var App = {
 			},
 			stopService: function() {
 				console.log("[App.feature.accelerometer.stopService]");
-				if (App.feature.accelerometer.watchID) {
-					navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
-					App.feature.accelerometer.watchID = null;
+				
+				navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
+				App.feature.accelerometer.watchID = null;
+		        document.getElementById('toogleAccelerometer').innerHTML = "Start watching";
+			},
+			toogleAccelerometer: function() {
+				if (App.feature.accelerometer.watchID != null) {
+					App.feature.accelerometer.stopService();
+				}
+				else {
+					App.feature.accelerometer.startService();
+		        	document.getElementById('toogleAccelerometer').innerHTML = "Stop watching";
 				}
 			},
 		},
@@ -414,10 +422,10 @@ var App = {
 				
 				document.getElementById('geolocation-status-bar').setAttribute('style', 'display: none !important;');
 
-				document.getElementById('lat').innerHTML = lat;
+				document.getElementById('lat').innerHTML = lat + '(watching)';
 				document.getElementById('lng').innerHTML = lng;
 				document.getElementById('alt').innerHTML = alt;
-				document.getElementById('acc').innerHTML = acc;
+				document.getElementById('acc').innerHTML = acc + 'm';
 				document.getElementById('alc').innerHTML = alc;
 				document.getElementById('hed').innerHTML = hed;
 				document.getElementById('spd').innerHTML = App.data.isNull(spd);
@@ -439,44 +447,41 @@ var App = {
 			},
 			stopService: function() {
 				console.log("[App.feature.geolocation.stopService]");
-				
+		        
+		        navigator.geolocation.clearWatch(App.feature.geolocation.watchID);
+		        App.feature.geolocation.watchID = null;
+		        document.getElementById('toogleGeolocation').innerHTML = "Start watching";
+			},
+			toogleGeolocation: function() {
 				if (App.feature.geolocation.watchID != null) {
-			        navigator.geolocation.clearWatch(App.feature.geolocation.watchID);
-			        App.feature.geolocation.watchID = null;
-			    }
+					App.feature.geolocation.stopService();
+				}
+				else {
+					App.feature.geolocation.startService();
+		        	document.getElementById('toogleGeolocation').innerHTML = "Stop watching";
+				}
 			},
 		},
 		contacts: {
 			showContacts: function(contacts) {
 				console.log("[App.feature.contacts.showContacts]");
-				alert('4');
 				
-				$('#contact-list').html("<strong>" + contacts.length + "</strong> contacts returned.<br/>");
-			    alert('5');
+				var cList = document.getElementById('contact-list');
+				cList.innerHTML = "<strong>" + contacts.length + "</strong> contacts found.<br/>";
 			    
-			    //for (var i = 0; i < contacts.length ; i++) { 
-			    for (var i = 0; i < 10 ; i++) {        
-			        if (contacts[i].name && contacts[i].name.formatted) {
-			            $('#contact-list').append("<br/> []" + (i+1) + "] <strong>" + 
-		            		contacts[i].name.formatted + "</strong>");
-		                    //contacts[i].name.formatted + "</strong> : " + contacts[i].phoneNumbers[0].formatted);
-			            break;
-			        }
+			    for (var i = 0; i < contacts.length ; i++) { 
+			        cList.innerHTML += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
 			    }
 			},
 			startService: function() {
 				console.log("[App.feature.contacts.startService]");
 				
-				alert('1');
 				var options = new ContactFindOptions();
 			    options.filter = "";
 			    options.multiple = true;
-			    alert('2');
-				var fields = [ "displayName", "name"];
-				
-				alert('3');
-
-			    navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
+			    
+			    var fields = ["displayName", "name"];
+				navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
 			},
 		},
     },
