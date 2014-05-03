@@ -183,32 +183,28 @@ var App = {
 				acc.xPos += -1*(xVal * 1.5);
 			    acc.yPos += (yVal * 1.5);
 			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
-			    
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
 				
 				var acc = App.feature.accelerometer;
-				
 				acc.oCan = document.getElementById('myCanvas');
-				acc.oCanTwoD = objCanvas.getContext("2d");
-				
-				acc.oCanWt = objCanvas.width;
-				acc.oCanHt = objCanvas.height;
+				acc.oCanTwoD = acc.oCan.getContext("2d");
+				acc.oCanWt = acc.oCan.width;
+				acc.oCanHt = acc.oCan.height;
 				
 				acc.oImg = new Image();
 		      	acc.oImg.src = "css/images/red-round-ball.png";
-		      	
 		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
-				
+		      	
 				acc.oImg.onload = function()
 				{
 					acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
 				};
 		      	
 		      	var options = { 
-					frequency: 100 
+					frequency: 25
 				};
 				if (!acc.watchID) {
 					acc.watchID = navigator.accelerometer.watchAcceleration(acc.showData, App.data.showError, options);
