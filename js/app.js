@@ -197,7 +197,7 @@ var App = {
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
 				acc.xPos += (-1*(xVal * 1.5))/3;
 			    acc.yPos += (yVal * 1.5)/3;
-			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
+			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 60, 60);
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -212,14 +212,12 @@ var App = {
 				acc.oCanHt = acc.oCan.height;
 				
 				acc.oImg = new Image();
-				acc.oImg.src = "css/images/blue-round-ball.png";
-		      	acc.oImg.width = 45 + 'px';
-				acc.oImg.Height = 45 + 'px';
+				acc.oImg.src = "css/images/football.png";
 		      	
 		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
 		      	
-				acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
+				acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 60, 60);
 				
 		      	var options = { 
 					frequency: 50
@@ -389,8 +387,13 @@ var App = {
 				cList.innerHTML = "<strong>" + contacts.length + "</strong> contacts found.<br/>";
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
-			        cList.innerHTML += "<br/> [" + (i+1) + 
-		        					"] <strong>" + contacts[i].displayName + "</strong>";
+			        cList.innerHTML += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
+			        
+			        if (contacts[i].phoneNumbers) {
+	                    for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
+	                        cList.innerHTML += " : " + contacts[i].phoneNumbers[j].value + "(" + contacts[i].phoneNumbers[j].type + ")";
+	                    }
+                	}
 			    }
 			},
 			startService: function() {
@@ -400,7 +403,7 @@ var App = {
 			    contactOptions.filter = "";
 			    contactOptions.multiple = true;
 			    
-			    var contactfields = ["displayName", "name"];
+			    var contactfields = ["displayName", "name", "phoneNumbers"];
 				navigator.contacts.find(contactfields, App.feature.contacts.showContacts, App.data.showError, contactOptions);
 			},
 		},
