@@ -183,12 +183,12 @@ var App = {
 				var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
 				date += ' ' + d.getHours() + ':' + App.data.numLength(2, d.getMinutes()) + ':' + App.data.numLength(2, d.getSeconds());
 				
-				document.getElementById('accelerometer-status-bar').setAttribute('style', 'display: none !important;');
+				document.getElementById('accelerometer-status-bar').innerHTML = "Watching device orientation...";
 				
 				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 3);
 				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 3);
 				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 3);
-				document.getElementById('date').innerHTML = date + ' (watching)';
+				document.getElementById('date').innerHTML = date + '';
 				
 				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
 				
@@ -197,7 +197,7 @@ var App = {
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
 				acc.xPos += (-1*(xVal * 1.5))/3;
 			    acc.yPos += (yVal * 1.5)/3;
-			    //acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
+			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -233,6 +233,8 @@ var App = {
 				
 				navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
 				App.feature.accelerometer.watchID = null;
+				
+				document.getElementById('accelerometer-status-bar').innerHTML = "Device orientation watch stopped...";
 		        document.getElementById('toogleAccelerometer').innerHTML = "Start watching";
 			},
 			toogleAccelerometer: function() {
@@ -358,7 +360,7 @@ var App = {
 			        navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
-			    	var options = { frequency: 5000, enableHighAccuracy: true };
+			    	var options = { frequency: 2000, enableHighAccuracy: true };
 			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
 			    }
 			},
@@ -388,20 +390,18 @@ var App = {
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
 			        cList.innerHTML += "<br/> [" + (i+1) + 
-		        					"] <strong>" + contacts[i].displayName + "</strong>" +
-		        					" : " + contacts[i].phoneNumbers[0].value + 
-		        					"(" + contacts[i].phoneNumbers[0].type + ")";
+		        					"] <strong>" + contacts[i].displayName + "</strong>";
 			    }
 			},
 			startService: function() {
 				console.log("[App.feature.contacts.startService]");
 				
-				var options = new ContactFindOptions();
-			    options.filter = "";
-			    options.multiple = true;
+				var contactOptions = new ContactFindOptions();
+			    contactOptions.filter = "";
+			    contactOptions.multiple = true;
 			    
-			    var fields = ["*"];
-				navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
+			    var contactfields = ["displayName", "name"];
+				navigator.contacts.find(contactfields, App.feature.contacts.showContacts, App.data.showError, contactOptions);
 			},
 		},
     },
