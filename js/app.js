@@ -180,8 +180,8 @@ var App = {
 				
 				var acc = App.feature.accelerometer;
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-				acc.xPos += (-1*(xVal * 1.5))/2;
-			    acc.yPos += (yVal * 1.5)/2;
+				acc.xPos += (-1*(xVal * 1.5))/10;
+			    acc.yPos += (yVal * 1.5)/10;
 			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
 			},
 			startService: function() {
@@ -196,7 +196,7 @@ var App = {
 				acc.oCanHt = acc.oCan.height;
 				
 				acc.oImg = new Image();
-		      	acc.oImg.src = "css/images/red-round-ball.png";
+		      	acc.oImg.src = "css/images/blue-round-ball.png";
 		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
 		      	
@@ -237,7 +237,14 @@ var App = {
 			},
 			onPhotoDataSuccess: function(imageData) {
 				console.log("[App.feature.camera.onPhotoDataSuccess]");
+				
+				var imgFrame = document.getElementById('img-frame');
+				var iWt = imgFrame.width - 2;
+				var iHt = imgFrame.width - 2;
 				var imgPreview = document.getElementById('img-preview');
+				
+				imgPreview.width = iWt +"px";
+				imgPreview.width = iHt +"px";
 				imgPreview.style.display = 'block';
     			imgPreview.style.visibility = 'visible';
 				imgPreview.src = "data:image/jpeg;base64," + imageData;
@@ -252,9 +259,10 @@ var App = {
 			capturePhoto: function() {
 				console.log("[App.feature.camera.capturePhoto]");
 				var options = { 
-						quality: 5, 
-						destinationType: App.camera_destinationType.DATA_URL,encodingType: Camera.EncodingType.JPEG,
-						targetWidth: 200,
+						quality: 30, 
+						destinationType: App.camera_destinationType.DATA_URL,
+						encodingType: Camera.EncodingType.JPEG,
+						targetHeight: 200,
 						saveToPhotoAlbum: true
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
@@ -262,7 +270,7 @@ var App = {
 			openPhotoAlbum: function() {
 				console.log("[App.feature.camera.getPhoto]");
 				var options = { 
-						quality: 50, 
+						quality: 30, 
 						destinationType: App.App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
@@ -371,7 +379,10 @@ var App = {
 				cList.innerHTML = "<strong>" + contacts.length + "</strong> contacts found.<br/>";
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
-			        cList.innerHTML += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
+			        cList.innerHTML += "<br/> [" + (i+1) + 
+		        					"] <strong>" + contacts[i].displayName + "</strong>" +
+		        					" : " + contacts[i].phoneNumbers[0].value + 
+		        					"(" + contacts[i].phoneNumbers[0].type + ")";
 			    }
 			},
 			startService: function() {
