@@ -114,29 +114,20 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<p id="device-status-bar">Loading device properties...</p>
-					<p id="device-details" style="display: none;">
-						<label class="data-title">Model Name:</label>
-						<label class="data-info" id="device-model">&nbsp;</label>
-						<label class="data-title">Device UUID:</label>
-						<label class="data-info" id="device-uuid">&nbsp;</label> 
-						<label class="data-title">Platform:</label>
-						<label class="data-info" id="device-platform">&nbsp;</label>  
-						<label class="data-title">Platform Version:</label>
-						<label class="data-info" id="device-version">&nbsp;</label> 
-						<label class="data-title">Cordova Version:</label>
-						<label class="data-info" id="device-cordova">&nbsp;</label>	
-						<hr/>
-						<label class="data-title">Screen width:</label>
-						<label class="data-info" id="screen-width">&nbsp;</label>
-						<label class="data-title">Screen height:</label>
-						<label class="data-info" id="screen-height">&nbsp;</label>
-						<label class="data-title">Available widht:</label>
-						<label class="data-info" id="screen-availWidth">&nbsp;</label>  
-						<label class="data-title">Available height:</label>
-						<label class="data-info" id="screen-availHeight">&nbsp;</label> 
-						<label class="data-title">Color depth:</label>
-						<label class="data-info" id="screen-colorDepth">&nbsp;</label>
-					</p>
+					
+					<table id="device-details" style="display: none;"> 
+						<tr><th>Model Name : </th><td id="device-model">&nbsp;</td></tr> 
+						<tr><th>Device UUID : </th><td id="device-uuid">&nbsp;</td></tr>  
+						<tr><th>Platform : </th><td id="device-platform">&nbsp;</td></tr>   
+						<tr><th>Platform Version : </th><td id="device-version">&nbsp;</td></tr>  
+						<tr><th>Cordova Version : </th><td id="device-cordova">&nbsp;</td></tr> 
+						<tr><th>&nbsp;</th><td>&nbsp;</td></tr>	
+						<tr><th>Screen width : </th><td id="screen-width">&nbsp;</td></tr> 
+						<tr><th>Screen height : </th><td id="screen-height">&nbsp;</td></tr> 
+						<tr><th>Available widht : </th><td id="screen-availWidth">&nbsp;</td></tr>   
+						<tr><th>Available height : </th><td id="screen-availHeight">&nbsp;</td></tr>  
+						<tr><th>Color depth : </th><td id="screen-colorDepth">&nbsp;</td></tr> 
+					</table>
 				</div>
 			</div>
 			
@@ -171,23 +162,7 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div class="inner-frame">
-						<table id="NineByNineCells">
-							<tr id="row1">
-								<td id="cell1">Top<br />Left</td>
-								<td id="cell2">Top</td>
-								<td id="cell3">Top<br />Right</td>
-							</tr>
-							<tr id="row2">
-								<td id="cell4">Left</td>
-								<td id="cell5">Center</td>
-								<td id="cell6">Right</td>
-							</tr>
-							<tr id="row3">
-								<td id="cell7">Bottom<br />Left</td>
-								<td id="cell8">Bottom</td>
-								<td id="cell9">Bottom<br />Right</td>
-							</tr>
-						</table>
+						<canvas id="myCanvas"></canvas>
 					</div>
 					<div class="feature-info">
 						<p id="accelerometer-status-bar">Waiting for accelerometer...</p>

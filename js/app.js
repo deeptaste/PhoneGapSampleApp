@@ -152,6 +152,13 @@ var App = {
 		},
 		accelerometer: {
 			watchID: null,
+			oCan: null,
+			oCanTwoD: null,
+			oCanWt: null,
+			oCanHt: null,
+			oImg: null,
+			xPos: null,
+			yPos: null,
 			
 			showData: function(acceleration) {
 				console.log("[App.feature.accelerometer.showData]");
@@ -171,169 +178,40 @@ var App = {
 				
 				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
 				
-				var cell1 = document.getElementById('cell1');
-				var cell2 = document.getElementById('cell2');
-				var cell3 = document.getElementById('cell3');
-				var cell4 = document.getElementById('cell4');
-				var cell5 = document.getElementById('cell5');
-				var cell6 = document.getElementById('cell6');
-				var cell7 = document.getElementById('cell7');
-				var cell8 = document.getElementById('cell8');
-				var cell9 = document.getElementById('cell9');
-				
-				cell1.setAttribute('style','');
-				cell2.setAttribute('style','');
-				cell3.setAttribute('style','');
-				cell4.setAttribute('style','');
-				cell5.setAttribute('style','');
-				cell6.setAttribute('style','');
-				cell7.setAttribute('style','');
-				cell8.setAttribute('style','');
-				cell9.setAttribute('style','');
-				
-				var darkShadow = 'background: linear-gradient(45deg,#D8E2E9,#8BAABC);';
-				var lightShadow = 'background: linear-gradient(45deg,#CBD9E2,#ECF1F4);';
-				
-				if(xVal == 0) {
-					if(yVal > 0) {
-						if(yVal < 2) {
-							cell2.setAttribute('style',lightShadow);
-						}
-						else {
-							cell2.setAttribute('style',darkShadow);
-						}
-					}
-					else if(yVal < 0) {
-						if(yVal > -2) {
-							cell5.setAttribute('style',lightShadow);
-						}
-						else {
-							cell8.setAttribute('style',darkShadow);
-						}
-					}
-					else {
-						cell5.setAttribute('style',darkShadow);
-					}
-				}
-				
-				if(xVal > 0) {
-					if(yVal > 0) {
-						if(yVal < 2) {
-							if(xVal < 2) {
-								cell2.setAttribute('style',lightShadow);
-								cell3.setAttribute('style',lightShadow);
-								cell6.setAttribute('style',lightShadow);
-							}
-							else {
-								cell2.setAttribute('style',lightShadow);
-								cell3.setAttribute('style',lightShadow);
-								cell6.setAttribute('style',darkShadow);
-							}
-						}
-						else {
-							if(xVal < 2) {
-								cell2.setAttribute('style',darkShadow);
-								cell3.setAttribute('style',lightShadow);
-								cell6.setAttribute('style',lightShadow);
-							}
-							else {
-								cell2.setAttribute('style',lightShadow);
-								cell3.setAttribute('style',darkShadow);
-								cell6.setAttribute('style',lightShadow);
-							}
-						}
-					}
-					else if(yVal < 0) {
-						if(yVal > -2) {
-							if(xVal < 2) {
-								cell6.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',lightShadow);
-								cell9.setAttribute('style',lightShadow);
-							}
-							else {
-								cell6.setAttribute('style',darkShadow);
-								cell8.setAttribute('style',lightShadow);
-								cell9.setAttribute('style',lightShadow);
-							}
-						}
-						else {
-							if(xVal < 2) {
-								cell6.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',darkShadow);
-								cell9.setAttribute('style',lightShadow);
-							}
-							else {
-								cell6.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',lightShadow);
-								cell9.setAttribute('style',darkShadow);
-							}
-						}
-					}
-				}
-				
-				if(xVal < 0 ){
-					if(yVal > 0) {
-						if(yVal < 2) {
-							if(xVal > -2) {
-								cell1.setAttribute('style',lightShadow);
-								cell2.setAttribute('style',lightShadow);
-								cell4.setAttribute('style',lightShadow);
-							}
-							else {
-								cell1.setAttribute('style',lightShadow);
-								cell2.setAttribute('style',lightShadow);
-								cell4.setAttribute('style',darkShadow);
-							}
-						}
-						else {
-							if(xVal > -2) {
-								cell1.setAttribute('style',lightShadow);
-								cell2.setAttribute('style',darkShadow);
-								cell4.setAttribute('style',lightShadow);
-							}
-							else {
-								cell1.setAttribute('style',darkShadow);
-								cell2.setAttribute('style',lightShadow);
-								cell4.setAttribute('style',lightShadow);
-							}
-						}
-					}
-					else if(yVal < 0) {
-						if(yVal > -2) {
-							if(xVal > -2) {
-								cell4.setAttribute('style',lightShadow);
-								cell7.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',lightShadow);
-							}
-							else {
-								cell4.setAttribute('style',darkShadow);
-								cell7.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',lightShadow);
-							}
-						}
-						else {
-							if(xVal > -2) {
-								cell4.setAttribute('style',lightShadow);
-								cell7.setAttribute('style',lightShadow);
-								cell8.setAttribute('style',darkShadow);
-							}
-							else {
-								cell4.setAttribute('style',lightShadow);
-								cell7.setAttribute('style',darkShadow);
-								cell8.setAttribute('style',lightShadow);
-							}
-						}
-					}
-				}
+				var acc = App.feature.accelerometer;
+				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+				acc.xPos += -1*(xVal * 1.5);
+			    acc.yPos += (yVal * 1.5);
+			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
+			    
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
 				
-				var options = { 
+				var acc = App.feature.accelerometer;
+				
+				acc.oCan = document.getElementById('myCanvas');
+				acc.oCanTwoD = objCanvas.getContext("2d");
+				
+				acc.oCanWt = objCanvas.width;
+				acc.oCanHt = objCanvas.height;
+				
+				acc.oImg = new Image();
+		      	acc.oImg.src = "css/images/red-round-ball.png";
+		      	
+		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
+		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
+				
+				acc.oImg.onload = function()
+				{
+					acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
+				};
+		      	
+		      	var options = { 
 					frequency: 100 
 				};
-				if (!App.feature.accelerometer.watchID) {
-					App.feature.accelerometer.watchID = navigator.accelerometer.watchAcceleration(App.feature.accelerometer.showData, App.data.showError, options);
+				if (!acc.watchID) {
+					acc.watchID = navigator.accelerometer.watchAcceleration(acc.showData, App.data.showError, options);
 				}
 			},
 			stopService: function() {
