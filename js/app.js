@@ -17,6 +17,8 @@ var App = {
 	
 	camera_pictureSource: null,
 	camera_destinationType: null,
+	
+	network_connectionType: null,
     
     initialize: function () {
 	    console.log("Initializing Apps");
@@ -86,6 +88,8 @@ var App = {
 		
 		App.camera_pictureSource = navigator.camera.PictureSourceType;
 		App.camera_destinationType = navigator.camera.DestinationType;
+		
+		App.network_connectionType = navigator.network.connection.type;
 	},
 	initPages: function () {
 		console.log("App finished loading");
@@ -133,6 +137,15 @@ var App = {
 			showData: function () {
 				console.log("[App.feature.deviceInfo.showData]");
 				
+				var states = {};
+				    states[Connection.UNKNOWN]  = 'Unknown connection';
+				    states[Connection.ETHERNET] = 'Ethernet connection';
+				    states[Connection.WIFI]     = 'WiFi connection';
+				    states[Connection.CELL_2G]  = 'Cell 2G connection';
+				    states[Connection.CELL_3G]  = 'Cell 3G connection';
+				    states[Connection.CELL_4G]  = 'Cell 4G connection';
+				    states[Connection.NONE]     = 'No network connection';
+				
 				document.getElementById('device-status-bar').setAttribute('style', 'display: none !important;');
 				
 				document.getElementById('device-model').innerHTML = App.device_model;
@@ -140,6 +153,7 @@ var App = {
 				document.getElementById('device-platform').innerHTML = App.device_platform;
 				document.getElementById('device-version').innerHTML = App.device_version;
 				document.getElementById('device-cordova').innerHTML = App.device_cordova;
+				document.getElementById('network-connection').innerHTML = states[App.network_connectionType];
 				
 				document.getElementById('screen-width').innerHTML = App.screen_width;
 				document.getElementById('screen-height').innerHTML = App.screen_height;
@@ -181,9 +195,9 @@ var App = {
 				var acc = App.feature.accelerometer; 
 				acc.oCan.width = acc.oCan.width; 
 				acc.oCanTwoD.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-				acc.xPos += (-1*(xVal * 1.5))/5;
-			    acc.yPos += (yVal * 1.5)/5;
-			    acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
+				acc.xPos += (-1*(xVal * 1.5))/3;
+			    acc.yPos += (yVal * 1.5)/3;
+			    //acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -208,7 +222,7 @@ var App = {
 				acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos, 45, 45);
 				
 		      	var options = { 
-					frequency: 100
+					frequency: 50
 				};
 				if (!acc.watchID) {
 					acc.watchID = navigator.accelerometer.watchAcceleration(acc.showData, App.data.showError, options);
@@ -325,9 +339,6 @@ var App = {
 				var lng = position.coords.longitude;
 				var alt = position.coords.altitude;
 				var acc = position.coords.accuracy;
-				var alc = position.coords.altitudeAccuracy;
-				var hed = position.coords.heading;
-				var spd = position.coords.speed;
 				
 				document.getElementById('geolocation-status-bar').setAttribute('style', 'display: none !important;');
 
@@ -335,9 +346,6 @@ var App = {
 				document.getElementById('lng').innerHTML = lng;
 				document.getElementById('alt').innerHTML = alt;
 				document.getElementById('acc').innerHTML = acc + 'm';
-				document.getElementById('alc').innerHTML = alc;
-				document.getElementById('hed').innerHTML = hed;
-				document.getElementById('spd').innerHTML = App.data.isNull(spd);
 				
 				document.getElementById('geolocation-details').setAttribute('style', 'display: block !important;');
 				
@@ -392,7 +400,7 @@ var App = {
 			    options.filter = "";
 			    options.multiple = true;
 			    
-			    var fields = ["displayName", "name", "phoneNumbers"];
+			    var fields = ["*"];
 				navigator.contacts.find(fields, App.feature.contacts.showContacts, App.data.showError, options);
 			},
 		},
