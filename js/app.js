@@ -198,10 +198,12 @@ var App = {
 		      	acc.xPos = (acc.oCanWt - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCanHt - acc.oImg.height)/2;
 		      	
+				/*
 				acc.oImg.onload = function()
 				{
 					acc.oCanTwoD.drawImage(acc.oImg, acc.xPos, acc.yPos);
 				};
+				*/
 		      	
 		      	var options = { 
 					frequency: 25
