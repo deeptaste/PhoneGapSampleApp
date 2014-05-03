@@ -9,6 +9,12 @@ var App = {
 	device_uuid: null,
 	device_cordova: null,
 	
+    screen_width: null,
+	screen_height: null,
+	screen_availWidth: null,
+	screen_availHeight: null,
+	screen_colorDepth: null,
+	
 	camera_pictureSource: null,
 	camera_destinationType: null,
     
@@ -71,6 +77,12 @@ var App = {
 		App.device_version = device.version;
 		App.device_uuid = device.uuid;
 		App.device_cordova = device.cordova;
+	
+	    App.screen_width = screen.width;
+		App.screen_height = screen.height;
+		App.screen_availWidth = screen.availWidth;
+		App.screen_availHeight = screen.availHeight;
+		App.screen_colorDepth= screen.colorDepth;
 		
 		App.camera_pictureSource = navigator.camera.PictureSourceType;
 		App.camera_destinationType = navigator.camera.DestinationType;
@@ -129,6 +141,12 @@ var App = {
 				document.getElementById('device-version').innerHTML = App.device_version;
 				document.getElementById('device-cordova').innerHTML = App.device_cordova;
 				
+				document.getElementById('screen-width').innerHTML = App.screen_width;
+				document.getElementById('screen-height').innerHTML = App.screen_height;
+				document.getElementById('screen-availWidth').innerHTML = App.screen_availWidth;
+				document.getElementById('screen-availHeight').innerHTML = App.screen_availHeight;
+				document.getElementById('screen-colorDepth').innerHTML = App.screen_colorDepth;
+				
 				document.getElementById('device-details').setAttribute('style', 'display: block !important;');
 			},
 		},
@@ -149,10 +167,10 @@ var App = {
 				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 3);
 				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 3);
 				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 3);
-				document.getElementById('date').innerHTML = date + ' (wathing)';
+				document.getElementById('date').innerHTML = date + ' (watching)';
 				
 				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
-					
+				
 				var cell1 = document.getElementById('cell1');
 				var cell2 = document.getElementById('cell2');
 				var cell3 = document.getElementById('cell3');
@@ -310,8 +328,9 @@ var App = {
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
+				
 				var options = { 
-					frequency: 1000 
+					frequency: 100 
 				};
 				if (!App.feature.accelerometer.watchID) {
 					App.feature.accelerometer.watchID = navigator.accelerometer.watchAcceleration(App.feature.accelerometer.showData, App.data.showError, options);
