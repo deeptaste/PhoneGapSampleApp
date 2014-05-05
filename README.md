@@ -1,8 +1,11 @@
 PhoneGap Demo App
 =================
 
-This mobile app uses HTML5, CSS3 and Javascript technologies. JQuery Mobile has been used as UI framework. 
-This cross-platform mobile application has been developed with the help of PhoneGap Build.
+This mobile app has been developed using HTML5, CSS3 and Javascript technologies. 
+The cross-platform tools or frameworks used for this mobile app are Apache Cordova (or PhoneGap) and jQuery Mobile. 
+Cordova has been used for implementing native featres like access to device hardware and software components
+Amd, jQuery Mobile has been used as UI framework. 
+This cross-platform mobile application has been built with the help of 'PhoneGap Build'.
 
 This mobile app test some of the mobile device features such as Accelerometer, Camera, Geolocation, and others.
 Also, the client-server architecture has been implemented for login and some other features.
