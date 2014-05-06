@@ -708,80 +708,11 @@ var App = {
     },
 };
 
-// Action For Home Page
-$("#Home").on("pageshow", function(e) {
-    // Do something on Home Page show
-    if (!App.testing_on_desktop) {
-    	App.feature.storage.selectData();
-    }
-    else {
-    	var fName = App.data.readLocalStorage('fullname');
-    	if(fName != null) {
-    		App.display.welcomeNote.UserLoggedIn(fName);
-    	}
-    }
-});
-
-// Action For Device Info Page
-$("#DeviceInfo").on("pageshow", function(e) {
-	$('#device-details').css("display","none");
 	
-    App.feature.deviceInfo.showData();
+
+
 });
 
-// Action For Accelerometer Page
-$("#Accelerometer").on("pageshow", function(e) {
-    $('#accelerometer-details').css("display","none");
-    
-    App.feature.accelerometer.startService();
-    
-    $(document).on('click', '#toogle-accelerometer', function() {
-        App.feature.accelerometer.toogleAccelerometer();
-    });
-});
 
-// Action For Camera Page
-$("#Camera").on("pageshow", function(e) {
-    App.feature.camera.startService();
-    
-    $('#img-preview').css({
-    	"width":"300px",
-    	"visibility":"hidden",
-    	"display":"none"
-	});
-	
-	$(document).on('click', '#capture-photo', function() {
-        App.feature.camera.capturePhoto();
-    });
-	
-	$(document).on('click', '#view-photoAlbum', function() {
-        App.feature.camera.openPhotoAlbum();
-    });
-});
 
-// Action For Contacts Page
-$("#Contacts").on("pageshow", function(e) {
-    App.feature.contacts.startService();
-});
 
-// Action For Geolocation Page
-$("#Geolocation").on("pageshow", function(e) {
-    $('#geolocation-details').css("display","none");
-    
-    App.feature.geolocation.startService();
-    
-    $(document).on('click', '#toogle-geolocation', function() {
-        App.feature.geolocation.toogleGeolocation();
-    });
-});
-
-// Action For Media Page
-$("#Media").on("pageshow", function(e) {
-	$('#audio-position').css({
-    	"visibility":"hidden",
-    	"display":"none"
-	});
-    $(document).on('click', '#rec-audio', function() {
-        App.feature.media.recordAudio();
-    });
-});
