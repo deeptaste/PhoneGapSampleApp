@@ -609,15 +609,24 @@ var App = {
 			
 			playbackRecord: function() {
 				var mda = App.feature.media;
+				
 				if (mda.mediaRec) {
-			        mda.mediaRec.play();
+			        console.log("Playing Record");
 			        $('#media-info').html("Playing record...");
 					$('#img-microphone').attr('src','css/images/microphone-not-recording.png');
+			        
 			        $('#audio-position').css({
 				    	"visibility":"hidden",
 				    	"display":"none"
 					});
-			        console.log("Playing Record");
+					
+					$('#playback-rec').css({
+				    	"visibility":"visible",
+				    	"display":"block"
+					});
+			        
+			        mda.mediaRec.stop();
+			        mda.mediaRec.play();
 			    }
 			}, 
 			recSuccess: function() {
@@ -634,7 +643,10 @@ var App = {
 			    var src = "myRecording.mp3";
 				var mda = App.feature.media;
 				
-				mda.mediaRec = new Media(src, mda.recSuccess, App.data.showError);
+				if (mda.mediaRec) {
+			        mda.mediaRec.release();  // help prevent errors
+			    }
+			    mda.mediaRec = new Media(src, mda.recSuccess, App.data.showError);
 				
 				mda.mediaRec.startRecord();
 				$('#media-info').html("Recording...");
