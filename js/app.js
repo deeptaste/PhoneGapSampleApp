@@ -342,6 +342,7 @@ var App = {
 		accelerometer: {
 			watchID: null,
 			oCan: null,
+			oCtx: null,
 			oImg: null,
 			xPos: null,
 			yPos: null,
@@ -374,9 +375,8 @@ var App = {
 					acc.xPos = acc.xPos + (-1*(xVal * 1.5))/2;
 					acc.yPos = acc.yPos + (yVal * 1.5)/2;
 				
-					var ctx = acc.oCan.getContext("2d");
-					ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-					ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
+					acc.oCtx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+					acc.oCtx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
 					
 					acc.preX = xVal;
 					acc.preY = yVal;
@@ -386,8 +386,8 @@ var App = {
 				var acc = App.feature.accelerometer;
 				acc.oCan = document.getElementById('myCanvas');
 				
-				var ctx = acc.oCan.getContext("2d");
-				ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+				acc.oCtx = acc.oCan.getContext("2d");
+				acc.oCtx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
 				
 				acc.oImg = new Image();
 				acc.oImg.src = "css/images/football.png";
@@ -395,11 +395,6 @@ var App = {
 		      	acc.oCan.height = acc.oCan.width;
 				acc.xPos = (acc.oCan.width - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCan.height - acc.oImg.height)/2;
-		      	/*
-		      	acc.oImg.onload = function(){
-			        ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
-			    };
-			    */
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -475,7 +470,7 @@ var App = {
 				console.log("[App.feature.camera.openPhotoAlbum]");
 				var options = { 
 						quality: 50, 
-						destinationType: App.App.camera_destinationType.FILE_URI,
+						destinationType: App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoURISuccess, App.data.showError, options);
@@ -625,7 +620,6 @@ var App = {
 				    	"display":"block"
 					});
 			        
-			        mda.mediaRec.stop();
 			        mda.mediaRec.play();
 			    }
 			}, 
