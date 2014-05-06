@@ -446,20 +446,6 @@
 		<script charset="utf-8" src="js/fastClick.js"></script>
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
 		<script>
-
-			// Action For Home Page
-			$("#Home").on("pageshow", function(e) {
-			    if (!App.testing_on_desktop) {
-			    	App.feature.storage.selectData();
-			    }
-			    else {
-			    	var fName = App.data.readLocalStorage('fullname');
-			    	if(fName != null) {
-			    		App.display.welcomeNote.UserLoggedIn(fName);
-			    	}
-			    }
-			});
-			
 			// Action For Device Info Page
 			$("#DeviceInfo").on("pageshow", function(e) {
 				$('#device-details').css("display","none");
