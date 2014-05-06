@@ -395,10 +395,11 @@ var App = {
 		      	acc.oCan.height = acc.oCan.width;
 				acc.xPos = (acc.oCan.width - acc.oImg.width)/2;
 		      	acc.yPos = (acc.oCan.height - acc.oImg.height)/2;
-		      	
+		      	/*
 		      	acc.oImg.onload = function(){
 			        ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
 			    };
+			    */
 			},
 			startService: function() {
 				console.log("[App.feature.accelerometer.startService]");
@@ -462,10 +463,10 @@ var App = {
 			capturePhoto: function() {
 				console.log("[App.feature.camera.capturePhoto]");
 				var options = { 
-						quality: 30, 
+						quality: 50, 
 						destinationType: App.camera_destinationType.DATA_URL,
 						encodingType: Camera.EncodingType.JPEG,
-						targetHeight: 200,
+						targetHeight: 250,
 						saveToPhotoAlbum: true
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
@@ -473,7 +474,7 @@ var App = {
 			openPhotoAlbum: function() {
 				console.log("[App.feature.camera.openPhotoAlbum]");
 				var options = { 
-						quality: 30, 
+						quality: 50, 
 						destinationType: App.App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};
@@ -622,9 +623,11 @@ var App = {
 			recSuccess: function() {
 				console.log("Record Success");
 			    $('#media-info').html("Recoding finished...");
-    			$(document).on('click', '#playback-rec', function() {
-			        App.feature.media.playbackRecord();
-			    });
+			    
+			    $('#playback-rec').css({
+			    	"visibility":"visible",
+			    	"display":"block"
+				});
 			}, 
 			recordAudio: function() {
 				console.log("Recording started");
@@ -633,7 +636,7 @@ var App = {
 				
 				mda.mediaRec = new Media(src, mda.recSuccess, App.data.showError);
 				
-				mediaRec.startRecord();
+				mda.mediaRec.startRecord();
 				$('#media-info').html("Recording...");
 				$('#img-microphone').attr('src','css/images/microphone-recording.png');
 				
@@ -649,7 +652,7 @@ var App = {
 		            $('#audio-position').html(recTime + " sec (remaining)");
 		            if (recTime <= 0) {
 		                clearInterval(recInterval);
-		                mediaRec.stopRecord();
+		                mda.mediaRec.stopRecord();
 		            }
 		        }, 1000);
 			},
