@@ -24,8 +24,8 @@
 					<p>
 						<label><b>Welcome!</b></label> 
 						<label>You have not logged in.</label> 
-						<label>Click <a href="#right-panel" onclick="userLoginDisplay()"><b>HERE</b></a> to login if already a member.</label>
-						<label>Otherwise, you can click <a href="#right-panel" onclick="userRegistrationDisplay()"><b>HERE</b></a> to register.</label>
+						<label>Click <a href="#right-panel" onclick="App.display.userLogin();"><b>HERE</b></a> to login if already a member.</label>
+						<label>Otherwise, you can click <a href="#right-panel" onclick="App.display.userRegistration();"><b>HERE</b></a> to register.</label>
 					</p>	
 				</div>
 				
@@ -48,55 +48,62 @@
 			
 			<div data-role="panel" data-position="right" data-position-fixed="false" data-display="reveal" id="right-panel" data-theme="b">
 				<div class="right-bar">
-						<form id="userLoginForm" class="userForm" data-ajax="false">
-							<div id="userLoginSection">
-								<h2>User Login</h2>
-								<label for="name">Username</label>
-								<input type="text" name="username" id="username" value="" data-clear-btn="false" data-mini="true">
-		
-								<label for="password">Password:</label>
-								<input type="password" name="password" id="password" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
-		
-								<label for="rememberMe">Remember Me?</label>
-								<input type="checkbox" name="rememberMe" id="rememberMe" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
-								
-								<div class="ui-grid-a">
-								    <div class="ui-block-b">
-								    	<a href="#" id="login" data-role="button" data-theme="b" data-mini="true">Login</a>
-							    	</div>
-								</div>
+					<form id="userLoginForm" class="userForm" data-ajax="false">
+						<div id="user-login-section">
+							<h2>User Login</h2>
+							<label for="login-username">Username</label>
+							<input type="text" name="login-username" id="login-username" value="" data-clear-btn="false" data-mini="true">
+	
+							<label for="login-password">Password:</label>
+							<input type="password" name="login-password" id="login-password" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
+	
+							<!--
+							<label for="login-rememberMe">Remember Me?</label>
+							<input type="checkbox" name="login-rememberMe" id="login-rememberMe" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
+							-->
+							<div class="ui-grid-a">
+							    <div class="ui-block-b">
+							    	<a href="#" id="login" data-role="button" data-theme="b" data-mini="true" onclick="App.form.login.submit();">Login</a>
+						    	</div>
+							    <div class="ui-block-b">
+							    	<a href="#" id="cancel-login" data-role="button" data-theme="c" data-mini="true" onclick="App.form.login.cancel();">Cancel</a>
+						    	</div>
 							</div>
-
-							<h1 id="userRegistrationLink" onclick="userRegistrationDisplay()">Not a member?</h1>
-						</form>
+						</div>
 						
-						<form id="userRegistrationForm" class="userForm" data-ajax="false" method="post">	
-							<div id="userRegistrationSection">
-								<h2>Create new user</h2>
-								<label for="name">Username</label>
-								<input type="text" name="username" id="username" value="" data-clear-btn="false" data-mini="true">
-		
-								<label for="password">Password:</label>
-								<input type="password" name="password" id="password" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
-		
-								<label for="password">Confirm Password:</label>
-								<input type="password" name="confirmPassword" id="confirmPassword" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
-		
-								<label for="email">Email</label>
-								<input type="email" name="email" id="email" value="" data-clear-btn="false" data-mini="true">
-		
-								<div class="ui-grid-a">
-								    <div class="ui-block-a">
-								    	<a href="#" id="register" data-rel="close" data-role="button" data-theme="b" data-mini="true">Save</a>
-							    	</div>
-								    <div class="ui-block-b">
-								    	<a href="#" id="cancel" data-rel="close" data-role="button" data-theme="c" data-mini="true">Cancel</a>
-							    	</div>
-								</div>
+						<h1 id="show-user-registration" onclick="App.display.userRegistration();">Not a member?</h1>
+					</form>
+					
+					<form id="userRegistrationForm" class="userForm" data-ajax="false" method="post">	
+						<div id="user-registration-section">
+							<h2>Create new user</h2>
+							<label for="register-fullname">Fullname</label>
+							<input type="text" name="register-fullname" id="register-fullname" value="" data-clear-btn="false" data-mini="true">
+	
+							<label for="register-username">Username</label>
+							<input type="text" name="register-username" id="register-username" value="" data-clear-btn="false" data-mini="true">
+	
+							<label for="register-password">Password:</label>
+							<input type="password" name="register-password" id="register-password" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
+	
+							<label for="register-confirm-password">Confirm Password:</label>
+							<input type="password" name="register-confirm-password" id="register-confirm-password" value="" data-clear-btn="false" autocomplete="off" data-mini="true">
+	
+							<label for="register-email">Email</label>
+							<input type="email" name="register-email" id="register-email" value="" data-clear-btn="false" data-mini="true">
+	
+							<div class="ui-grid-a">
+							    <div class="ui-block-a">
+							    	<a href="#" id="register" data-role="button" data-theme="b" data-mini="true" onclick="App.form.registration.submit();">Save</a>
+						    	</div>
+							    <div class="ui-block-b">
+							    	<a href="#" id="cancel-registration" data-role="button" data-theme="c" data-mini="true" onclick="App.form.registration.cancel();">Cancel</a>
+						    	</div>
 							</div>
-							
-							<h1 id="userLoginLink" onclick="userLoginDisplay()">Already a member?</h1>
-						</form>
+						</div>
+						
+						<h1 id="show-user-login" onclick="App.display.userLogin();">Already a member?</h1>
+					</form>
 				</div>
 			</div>
 			
@@ -119,7 +126,7 @@
 				<div class="main-frame">
 					<p id="device-status-bar">Loading device properties...</p>
 					
-					<table id="device-details" style="display: none;"> 
+					<table id="device-details"> 
 						<tr><th>Model Name : </th><td id="device-model">&nbsp;</td></tr> 
 						<tr><th>Device UUID : </th><td id="device-uuid">&nbsp;</td></tr>  
 						<tr><th>Platform : </th><td id="device-platform">&nbsp;</td></tr>   
@@ -170,7 +177,7 @@
 					</div>
 					<div class="feature-info">
 						<p id="accelerometer-status-bar">Waiting for accelerometer...</p>
-						<table id="accelerometer-details" style="display: none;" class="tbl-info"> 
+						<table id="accelerometer-details" class="tbl-info"> 
 							<tr><th>X-Val : </th><td id="xVal">&nbsp;</td></tr> 
 							<tr><th>Y-Val : </th><td id="yVal">&nbsp;</td></tr> 
 							<tr><th>Z-Val : </th><td id="zVal">&nbsp;</td></tr>  
@@ -179,7 +186,7 @@
 						
 				    </div>
 				    <div class="btn-frame">
-						<div id="toogleAccelerometer" class="custom-btn" onclick="App.feature.accelerometer.toogleAccelerometer();">Stop Accelerometer</div>
+						<div id="toogle-accelerometer" class="custom-btn">Stop Accelerometer</div>
 				    </div>
 				</div>
 			</div>
@@ -215,11 +222,11 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div id="img-frame" class="img-frame">
-						<img id="img-preview" style="width:300px;visibility:hidden;display:none;" src="" />
+						<img id="img-preview" src="" />
 					</div>
 					<div class="btn-frame">
-						<div class="custom-btn" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
-					    <div class="custom-btn" onclick="App.feature.camera.openPhotoAlbum();">From Photo Album</div>
+						<div class="custom-btn" id="capture-photo">Capture Photo</div>
+					    <div class="custom-btn" id="view-photoAlbum">From Photo Album</div>
 				    </div>
 				</div>
 			</div>
@@ -257,7 +264,7 @@
 					<div id="map-frame"><label>Map</label></div>
 					<div class="feature-info">
 						<p id="geolocation-status-bar">Finding location...</p>
-						<table id="geolocation-details" style="display: none;" class="tbl-info"> 
+						<table id="geolocation-details" class="tbl-info"> 
 							<tr><th>Latitude : </th><td id="lat">&nbsp;</td></tr> 
 							<tr><th>Longitude : </th><td id="lng">&nbsp;</td></tr> 
 							<tr><th>Altitude : </th><td id="alt">&nbsp;</td></tr>  
@@ -265,7 +272,7 @@
 						</table>
 				    </div>
 				    <div class="btn-frame">
-						<div id="toogleGeolocation" class="custom-btn" onclick="App.feature.geolocation.toogleGeolocation();">Stop Watching</div>
+						<div id="toogle-geolocation" class="custom-btn">Stop Watching</div>
 				    </div>
 				</div>
 			</div>
@@ -337,13 +344,13 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div>
-						<p>Playing a sample audio file.</p>
+						<p id="media-info">Record your voice...</p>
+						<img id="img-microphone" src="css/images/microphone-not-recording.png"/>
 						<p id="audio-position">&nbsp;</p>
 					</div>
 					<div class="btn-frame">
-						<div class="custom-btn" onclick="App.feature.media.playAudio();">Play</div>
-					    <div class="custom-btn" onclick="App.feature.media.pauseAudio();">Pause</div>
-					    <div class="custom-btn" onclick="App.feature.media.stopAudio();">Stop</div>
+						<div class="custom-btn" id="rec-audio">Record Audio</div>
+ 						<div class="custom-btn" id="playback-rec">Playback</div>
 				    </div>
 				</div>
 			</div>
@@ -438,26 +445,5 @@
 		<script charset="utf-8" src="js/jquery.mobile-1.3.2.min.js"></script>
 		<script charset="utf-8" src="js/fastClick.js"></script>
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
-		<script>
-			$("#DeviceInfo").on("pageshow", function(e) {
-	            App.feature.deviceInfo.showData();
-	        });
-			
-			$("#Accelerometer").on("pageshow", function(e) {
-	            App.feature.accelerometer.startService();
-	        });
-			
-			$("#Camera").on("pageshow", function(e) {
-	            App.feature.camera.startService();
-	        });
-			
-			$("#Contacts").on("pageshow", function(e) {
-	            App.feature.contacts.startService();
-	        });
-			
-			$("#Geolocation").on("pageshow", function(e) {
-	            App.feature.geolocation.startService();
-	        });
-		</script>
 	</body>
 </html>

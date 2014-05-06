@@ -1,5 +1,7 @@
 /**
- * @author Diptesh Shrestha
+ * Created on : 2014
+ * Author's Name : Diptesh Shrestha
+ * Author's Email : diptesh.shrestha@gmail.com
  */
 var App = {
     testing_on_desktop: false,
@@ -121,15 +123,183 @@ var App = {
 		showError: function (err) {
 			console.log("[App.data.showError]");
 			var msg = 'code: ' + err.code + '\n' + 'message: ' + err.message + '\n';
+			navigator.notification.beep(2);
 			navigator.notification.alert(msg, null, 'ERROR', 'OK');
 	    },
-	    notifyLogin: function() {
-			var userInfo = document.getElementById("user-info");
-			userInfo.innerHTML = "<p><label><b>Welcome!</b></label>" + 
-					"<label>You have logged in as " + App.feature.storage.username + ".</label>" + 
-					"<label>Click <a href='#' onclick='logout()'>here</a> to logout.</label></p>";
-			navigator.notification.beep(2); 
+		writeLocalStorage: function(key, value) {
+			window.localStorage.setItem(key, value);
 		},
+		readLocalStorage: function(key) {
+			return window.localStorage.getItem(key);
+		},
+    },
+    display: {
+    	userLogin: function() {
+    		$('#user-login-section').css("display","block");
+			$('#show-user-registration').css("display","block");
+			
+			$('#user-registration-section').css("display","none");
+			$('#show-user-login').css("display","none");
+    	},
+    	userRegistration: function() {
+    		$('#user-registration-section').css("display","block");
+			$('#show-user-login').css("display","block");
+			
+			$('#user-login-section').css("display","none");
+			$('#show-user-registration').css("display","none");
+    	},
+    	welcomeNote: {
+    		UserLoggedIn: function(fullname) {
+				$('#right-panel').panel('close');
+				$("#user-info").html("<p><label><b>Welcome!</b></label>" + 
+						"<label>You have logged in as " + fullname + ".</label>" + 
+						"<label><a href='#' onclick='App.form.logout()'>LOGOUT</a></label></p>"); 
+			},
+			UserNotLoggedIn: function() {
+				$("#user-info").html("<p><label><b>Welcome!</b></label>" +
+						"<label>You have not logged in.</label>" + 
+						"<label>Click <a href='#right-panel' onclick='App.display.userLogin();'><b>HERE</b></a> to login if already a member.</label>" +
+						"<label>Otherwise, you can click <a href='#right-panel' onclick='App.display.userRegistration();'><b>HERE</b></a> to register.</label>" +
+						"</p>"); 
+			},
+    	},
+    },
+    form: {
+    	logout: function() {
+    		if (!App.testing_on_desktop) {
+	    		var storage = App.feature.storage;
+		    	storage.tblName = "USER";
+		    	storage.tblfields = "USERNAME, FULLNAME";
+		    	storage.tblValues = "'" + data['username'] + "','" + data['fullname'];
+		    	storage.db.transaction(createTable, App.data.showError);
+		    	storage.db.transaction(insertData, App.data.showError);
+	    	}
+	    	
+    		App.display.welcomeNote.UserLoggedIn(data['fullname']);
+    	},
+    	login: {
+    		submit: function() {
+    			var uName = $('#login-username').val();
+				var pWord = $('#login-password').val();
+				
+				if(uName.length > 0 && pWord.length > 0) {
+					if(!App.feature.reachability()){
+						navigator.notification.beep(2);
+				        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+				    }
+				    else{
+				    	$.ajax({
+						    url        		: "http://localhost/SoapWebServiceForMobileApp/login.php?callback=myCallBack",
+						    type       		: "POST",
+						    crossDomain		: true,
+						    data       		: {username : uName, password : pWord},
+						    contentType		: "application/json; charset=utf-8",
+						    dataType		: "jsonp",
+						    jsonp			: "callback",
+						    jsonpCallback	: "jsonpCallback",
+						    success    		: function(data) {
+						    	if(data['status'] == "success") {
+						    		App.form.login.success(data);
+						    	}
+						    	else {
+									navigator.notification.vibrate(0);
+						    		navigator.notification.alert("Wrong Username/Password. Try again.", null, '', 'OK');
+						    	}
+						    },
+						    error : function(xhr, ajaxOptions, thrownErrorw) {
+						        navigator.notification.beep(2);
+								navigator.notification.alert('Some error occurred. Please try again later.', null, 'ERROR', 'OK');           
+						    }
+						});
+				    }
+				}
+				else {
+					navigator.notification.beep(2);
+					navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'Login');
+				}
+    		},
+    		cancel: function() {
+    			$('#login-username').val('');
+				$('#login-password').val('');
+    		},
+    		success: function(data) {
+	    		if (!App.testing_on_desktop) {
+		    		var storage = App.feature.storage;
+			    	storage.tblName = "USER";
+			    	storage.tblfields = "username, fullname";
+			    	storage.tblValues = "'" + data['username'] + "','" + data['fullname'];
+			    	storage.db.transaction(createTable, App.data.showError);
+			    	storage.db.transaction(insertData, App.data.showError);
+		    	}
+		    	
+		    	App.data.writeLocalStorage('username',data['username']);
+		    	App.data.writeLocalStorage('fullname',data['fullname']);
+		    	
+		    	App.display.welcomeNote.UserLoggedIn(data['fullname']);
+    		}
+    	},
+    	registration: {
+    		submit: function() {
+    			var fName = $('#register-fullname').val();
+    			var uName = $('#register-username').val();
+				var pWord = $('#register-password').val();
+				var cWord = $('#register-confirm-password').val();
+				var eMail = $('#register-email').val();
+				
+				if(fName.length > 0 && uName.length > 0 && pWord.length > 0 && eMail.length > 0) {
+					if(pWord == cWord) {
+						if(!App.feature.reachability()){
+							navigator.notification.beep(2);
+					        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+					    }
+					    else{
+					    	$.ajax({
+							    url        		: "http://localhost/SoapWebServiceForMobileApp/register.php?callback=myCallBack",
+							    type       		: "POST",
+							    crossDomain		: true,
+							    data       		: {fullname : fName, username : uName, password : pWord, email: eMail},
+							    contentType		: "application/json; charset=utf-8",
+							    dataType		: "jsonp",
+							    jsonp			: "callback",
+							    jsonpCallback	: "jsonpCallbackfunction",
+							    success    		: function(data) {
+							    	if(data['status'] == "success") {
+							    		App.form.registration.success(data);
+							    	}
+							    	else {
+										navigator.notification.vibrate(0);
+							    		navigator.notification.alert("Some error occurred. Please try again later.", null, '', 'OK');
+							    	}
+							    },
+							    error : function(xhr, ajaxOptions, thrownErrorw) {
+						        	navigator.notification.beep(2);	
+							        navigator.notification.alert('Some error occurred. Please try again later.', null, '', 'OK');        
+							    }
+							});
+					    }
+				    }
+					else {
+						navigator.notification.beep(2);
+						navigator.notification.alert('Password does not match.', null, 'ERROR', 'OK');
+					}
+				}
+				else {
+					navigator.notification.beep(2);
+					navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'OK');
+				}
+    		},
+    		success: function() {
+    			navigator.notification.alert("You can now login.", null, '', 'OK');
+    			App.display.userLogin();
+    		},
+    		cancel: function() {
+    			$('#register-username').val('');
+				$('#register-password').val('');
+				$('#register-confirm-password').val('');
+				$('#register-email').val('');
+				$('#right-panel').panel('close');
+    		},
+    	}
     },
     feature: {
     	reachability: function () {
@@ -153,22 +323,20 @@ var App = {
 				    states[Connection.CELL_4G]  = 'Cell 4G connection';
 				    states[Connection.NONE]     = 'No network connection';
 				
-				document.getElementById('device-status-bar').setAttribute('style', 'display: none !important;');
+				$('#device-status-bar').css("display","none");
+				$('#device-details').css("display","block");
 				
-				document.getElementById('device-model').innerHTML = App.device_model;
-				document.getElementById('device-uuid').innerHTML = App.device_uuid;
-				document.getElementById('device-platform').innerHTML = App.device_platform;
-				document.getElementById('device-version').innerHTML = App.device_version;
-				document.getElementById('device-cordova').innerHTML = App.device_cordova;
-				document.getElementById('network-connection').innerHTML = states[App.network_connectionType];
-				
-				document.getElementById('screen-width').innerHTML = App.screen_width;
-				document.getElementById('screen-height').innerHTML = App.screen_height;
-				document.getElementById('screen-availWidth').innerHTML = App.screen_availWidth;
-				document.getElementById('screen-availHeight').innerHTML = App.screen_availHeight;
-				document.getElementById('screen-colorDepth').innerHTML = App.screen_colorDepth;
-				
-				document.getElementById('device-details').setAttribute('style', 'display: block !important;');
+				$('#device-model').html(App.device_model);
+				$('#device-uuid').html(App.device_uuid);
+				$('#device-platform').html(App.device_platform);
+				$('#device-version').html(App.device_version);
+				$('#device-cordova').html(App.device_cordova);
+				$('#network-connection').html(states[App.network_connectionType]);
+				$('#screen-width').html(App.screen_width);
+				$('#screen-height').html(App.screen_height);
+				$('#screen-availWidth').html(App.screen_availWidth);
+				$('#screen-availHeight').html(App.screen_availHeight);
+				$('#screen-colorDepth').html(App.screen_colorDepth);
 			},
 		},
 		accelerometer: {
@@ -177,6 +345,8 @@ var App = {
 			oImg: null,
 			xPos: null,
 			yPos: null,
+			preX: 0,
+			preY: 0,
 			
 			showData: function(acceleration) {
 				console.log("[App.feature.accelerometer.showData]");
@@ -187,26 +357,30 @@ var App = {
 				var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
 				date += ' ' + d.getHours() + ':' + App.data.numLength(2, d.getMinutes()) + ':' + App.data.numLength(2, d.getSeconds());
 				
-				document.getElementById('accelerometer-status-bar').innerHTML = "Watching device orientation...";
+				$('#accelerometer-status-bar').html("Watching device orientation...");
+				$('#accelerometer-details').css("display","block");
 				
-				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 5);
-				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 5);
-				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 5);
-				document.getElementById('date').innerHTML = date + '';
-				
-				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
-				
+				$('#xVal').html(App.data.roundNumber(xVal, 5));
+				$('#yVal').html(App.data.roundNumber(yVal, 5));
+				$('#zVal').html(App.data.roundNumber(zVal, 5));
+				$('#date').html(date + '');
+
 				App.feature.accelerometer.moveObject(xVal, yVal);
 			},
 			moveObject: function(xVal, yVal) {
 				var acc = App.feature.accelerometer; 
 				
-				acc.xPos = acc.xPos + (-1*(xVal * 1.5))/2;
-				acc.yPos = acc.yPos + (yVal * 1.5)/2;
+				if(acc.preX != xVal && acc.preY != yVal) {
+					acc.xPos = acc.xPos + (-1*(xVal * 1.5))/2;
+					acc.yPos = acc.yPos + (yVal * 1.5)/2;
 				
-				var ctx = acc.oCan.getContext("2d");
-				ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
-				ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
+					var ctx = acc.oCan.getContext("2d");
+					ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+					ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
+					
+					acc.preX = xVal;
+					acc.preY = yVal;
+				}
 			},
 			createObject: function() {
 				var acc = App.feature.accelerometer;
@@ -241,12 +415,13 @@ var App = {
 			},
 			stopService: function() {
 				console.log("[App.feature.accelerometer.stopService]");
+				var acc = App.feature.accelerometer;
 				
-				navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
-				App.feature.accelerometer.watchID = null;
+				navigator.accelerometer.clearWatch(acc.watchID);
+				acc.watchID = null;
 				
-				document.getElementById('accelerometer-status-bar').innerHTML = "Device orientation watch stopped...";
-		        document.getElementById('toogleAccelerometer').innerHTML = "Start watching";
+				$('#accelerometer-status-bar').html("Device orientation watch stopped...");
+		        $('#toogle-accelerometer').html("Start watching");
 			},
 			toogleAccelerometer: function() {
 				var acc = App.feature.accelerometer;
@@ -255,7 +430,7 @@ var App = {
 				}
 				else {
 					acc.startService();
-		        	document.getElementById('toogleAccelerometer').innerHTML = "Stop watching";
+		        	$('#toogle-accelerometer').html("Stop watching");
 				}
 			},
 		},
@@ -329,6 +504,7 @@ var App = {
 			},
 			showMap: function(position) {
 				console.log("[App.feature.geolocation.showMap]");
+				
 				var lat = position.coords.latitude;
 				var lng = position.coords.longitude;
 				
@@ -354,43 +530,48 @@ var App = {
 				var alt = position.coords.altitude;
 				var acc = position.coords.accuracy;
 				
-				document.getElementById('geolocation-status-bar').setAttribute('style', 'display: none !important;');
+				$('#geolocation-status-bar').html("Watching Geolocation...");
+				$('#geolocation-details').css("display","block");
 
-				document.getElementById('lat').innerHTML = lat + '(watching)';
-				document.getElementById('lng').innerHTML = lng;
-				document.getElementById('alt').innerHTML = alt;
-				document.getElementById('acc').innerHTML = acc + 'm';
-				
-				document.getElementById('geolocation-details').setAttribute('style', 'display: block !important;');
+				$('#lat').html(lat);
+				$('#lng').html(lng);
+				$('#alt').html(alt);
+				$('#acc').html(acc + 'm');
 				
 				App.feature.geolocation.showMap(position);
 			},
 			startService: function() {
 				console.log("[App.feature.geolocation.startService]");
 				
+				var gl = App.feature.geolocation;
+				
 				if(!App.feature.reachability()){
 			        navigator.notification.alert('No internet connection available', null, '', 'OK');
 			    }
 			    else{
 			    	var options = { frequency: 2000, enableHighAccuracy: true };
-			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
+			    	gl.watchID = navigator.geolocation.watchPosition(gl.showData, App.data.showError, options);
 			    }
 			},
 			stopService: function() {
+				var gl = App.feature.geolocation;
 				console.log("[App.feature.geolocation.stopService]");
 		        
-		        navigator.geolocation.clearWatch(App.feature.geolocation.watchID);
-		        App.feature.geolocation.watchID = null;
-		        document.getElementById('toogleGeolocation').innerHTML = "Start watching";
+		        navigator.geolocation.clearWatch(gl.watchID);
+		        gl.watchID = null;
+		        
+		        $('#geolocation-status-bar').html("Geolocation watch stopped...");
+				$('#toogle-geolocation').html("Start watching");
 			},
 			toogleGeolocation: function() {
 				var gl = App.feature.geolocation;
+				
 				if (gl.watchID != null) {
 					gl.stopService();
 				}
 				else {
 					gl.startService();
-		        	document.getElementById('toogleGeolocation').innerHTML = "Stop watching";
+					$('#toogle-geolocation').html("Stop watching");
 				}
 			},
 		},
@@ -398,18 +579,18 @@ var App = {
 			showContacts: function(contacts) {
 				console.log("[App.feature.contacts.showContacts]");
 				
-				var cList = document.getElementById('contact-list');
-				cList.innerHTML = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers only.<br/>";
+				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers only.<br/>";
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
 			        if (contacts[i].phoneNumbers) {
-	                	cList.innerHTML += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
+	                	txtContactList += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
 	                	
 	                    for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
-	                        cList.innerHTML += " : " + contacts[i].phoneNumbers[j].value + "(" + contacts[i].phoneNumbers[j].type + ")";
+	                        txtContactList += " : " + contacts[i].phoneNumbers[j].value + "(" + contacts[i].phoneNumbers[j].type + ")";
 	                    }
                 	}
 			    }
+			    $('#contact-list').html(txtContactList);
 			},
 			startService: function() {
 				console.log("[App.feature.contacts.startService]");
@@ -423,53 +604,54 @@ var App = {
 			},
 		},
 		media: {
-			myMedia: null,
-			mediaTimer: null,
+			mediaRec: 0,
 			
-			playAudio: function() {
-				var src = 'data/audio/sample.mp3';
+			playbackRecord: function() {
 				var mda = App.feature.media;
-				mda.myMedia = new Media(src, mda.onSuccess, App.data.onError);
-	            mda.myMedia.play();
-	
-	            // Update myMedia position every second
-	            if (mda.mediaTimer == null) {
-	                mda.mediaTimer = setInterval(function() {
-	                    mda.myMedia.getCurrentPosition(
-	                        // success callback
-	                        function(position) {
-	                            if (position > -1) {
-	                                mda.setAudioPosition((position) + " sec");
-	                            }
-	                        },
-	                        // error callback
-	                        function(e) {
-	                            console.log("Error getting pos=" + e);
-	                            mda.setAudioPosition("Error: " + e);
-	                        }
-	                    );
-	                }, 1000);
-	            }
+				if (mda.mediaRec) {
+			        mda.mediaRec.play();
+			        $('#media-info').html("Playing record...");
+					$('#img-microphone').attr('src','css/images/microphone-not-recording.png');
+			        $('#audio-position').css({
+				    	"visibility":"hidden",
+				    	"display":"none"
+					});
+			        console.log("Playing Record");
+			    }
 			}, 
-			pauseAudio: function() {
+			recSuccess: function() {
+				console.log("Record Success");
+			    $('#media-info').html("Recoding finished...");
+    			$(document).on('click', '#playback-rec', function() {
+			        App.feature.media.playbackRecord();
+			    });
+			}, 
+			recordAudio: function() {
+				console.log("Recording started");
+			    var src = "myRecording.mp3";
 				var mda = App.feature.media;
-				 if (mda.myMedia) {
-	                mda.myMedia.pause();
-	            }
-			}, 
-			stopAudio: function() {
-				var mda = App.feature.media;
-				if (mda.myMedia) {
-	                mda.myMedia.stop();
-	            }
-	            clearInterval(mda.mediaTimer);
-	            mda.mediaTimer = null;
-			}, 
-			onSuccess: function () {
-	            console.log("playAudio():Audio Success");
-	        },
-	        setAudioPosition: function(position) {
-				document.getElementById('audio-position').innerHTML = position;
+				
+				mda.mediaRec = new Media(src, mda.recSuccess, App.data.showError);
+				
+				mediaRec.startRecord();
+				$('#media-info').html("Recording...");
+				$('#img-microphone').attr('src','css/images/microphone-recording.png');
+				
+				$('#audio-position').css({
+			    	"visibility":"visible",
+			    	"display":"block"
+				});
+				
+				var recTime = 10;
+				$('#audio-position').html(recTime + " sec (remaining)");
+		        var recInterval = setInterval(function() {
+		            recTime = recTime - 1;
+		            $('#audio-position').html(recTime + " sec (remaining)");
+		            if (recTime <= 0) {
+		                clearInterval(recInterval);
+		                mediaRec.stopRecord();
+		            }
+		        }, 1000);
 			},
 		},
 		storage: {
@@ -479,133 +661,127 @@ var App = {
 			tblValues: null,
 			
 			createTbl: function(tran) {
-				tran.executeSql("DROP TABLE IF EXISTS " + App.feature.storage.tblName);
-    			tran.executeSql("CREATE TABLE IF NOT EXISTS " + App.feature.storage.tblName + 
-    													 " (" + App.feature.storage.tblFields + ")");
+				var str = App.feature.storage;
+				tran.executeSql("DROP TABLE IF EXISTS " + str.tblName);
+    			tran.executeSql("CREATE TABLE IF NOT EXISTS " + str.tblName + 
+    													 " (" + str.tblFields + ")");
 			},
 			insertData: function(tran) {
-				tran.executeSql("INSERT INTO " + App.feature.storage.tableName + 
-							 			  " (" + App.feature.storage.tblFields + 
-							 	  ") VALUES (" + App.feature.storage.tblValues + ")");
+				var str = App.feature.storage;
+				tran.executeSql("INSERT INTO " + str.tableName + 
+							 			  " (" + str.tblFields + 
+							 	  ") VALUES (" + str.tblValues + ")");
 			},
 			deleteTbl: function(tran) {
 				tran.executeSql("DROP TABLE IF EXISTS " + App.feature.storage.tblName);
 			},
 			createDb: function() {
 				if (!App.feature.storage.db) {
-			        App.feature.storage.db = window.openDatabase("Database", "1.0", "MyDatabase", 200000);
+			        App.feature.storage.db = window.openDatabase("app_db", "1.0", "TEST DB", 200000);
 			    }
 			},
+			getResultSet: function(tran, results) {
+    			if (results.rowsAffected) {
+	    			var len = results.rows.length;
+	    			console.log("Num. Rows Returned = " + len);
+	    			
+    				console.log("Last inserted row ID = " + results.insertId);
+    				
+    				// Show only one record
+    				var i = 0; //For showing all data create a loop as => for (var i=0; i<len; i++) {...}
+    				console.log("Row = 0" + i + " USERNAME = " + results.rows.item(i).username + ", fullname =  " + results.rows.item(i).fullname);
+    				
+    				App.display.welcomeNote.UserLoggedIn(results.rows.item(i).username);
+    			}
+    			else {
+				  console.log('No rows affected!');
+				  return false;
+				}
+			},
+			selectData: function() {
+				if(!App.feature.storage.tblName) {
+					App.feature.storage.tblName = "USER";
+				}
+				tran.executeSql("SELECT * FROM " + App.feature.storage.tblName, [], App.feature.storage.getResultSet, App.data.showError);
+			}, 
 		},
     },
 };
 
-$(document).on('pageshow', '#home', function(){  
-	
-	// User Login via Ajax Functionalities
-	$(document).on('click', '#login', function(e) {
-		var uName = $('#username').val();
-		var pWord = $('#password').val();
-		
-		if(uName.length > 0 && pWord.length > 0) {
-			navigator.notification.alert('Processing...', null, '', 'OK');
-			
-			if(!App.feature.reachability()){
-		        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
-		    }
-		    else{
-		    	$.ajax({
-				    url        		: "http://localhost/SoapWebServiceForMobileApp/login.php?callback=myCallBack",
-				    type       		: "POST",
-				    crossDomain		: true,
-				    data       		: {username : uName, password : pWord},
-				    contentType		: "application/json; charset=utf-8",
-				    dataType		: "jsonp",
-				    jsonp			: "callback",
-				    jsonpCallback	: "jsonpCallbackfunction",
-				    success    		: function(data) {
-				    	//navigator.notification.alert(data, null, '', 'OK');
-				    	if(data == "success") {
-				    		var storage = App.feature.storage;
-					    	storage.tblName = "USER";
-					    	storage.tblfields = "USERNAME";
-					    	storage.tblValues = username;
-					    	storage.db.transaction(createTable, App.data.showError);
-					    	storage.db.transaction(insertData, App.data.showError, App.data.notifyLogin);	
-				    	}
-				    	else {
-				    		navigator.notification.vibrate(0);
-				    		navigator.notification.alert(data, null, '', 'OK');
-				    	}
-				    },
-				    error      		: function(xhr, ajaxOptions, thrownErrorw) {
-				        navigator.notification.alert('Some error occurred. Please try again later.', null, 'ERROR', 'OK');           
-				    }
-				});
-		    }
-		}
-		else {
-			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'Login');
-		}
-	});
-	
-	// User Registration via Ajax Functionalities
-	$(document).on('click', '#register', function(e) {
-		var uName = $('#username').val();
-		var pWord = $('#password').val();
-		var cWord = $('#confirmPassword').val();
-		var eMail = $('#email').val();
-		
-		if(uName.length > 0 && pWord.length > 0 && eMail.length > 0) {
-			if(pWord == cWord) {
-				navigator.notification.alert('Processing...', null, '', 'OK');
-				
-				if(!App.feature.reachability()){
-			        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
-			    }
-			    else{
-			    	$.ajax({
-					    url        		: "http://localhost/SoapWebServiceForMobileApp/register.php?callback=myCallBack",
-					    type       		: "POST",
-					    crossDomain		: true,
-					    //beforeSend 	: function() {$.mobile.loading('show');},
-					    //complete   	: function() {$.mobile.loading('hide');},
-					    data       		: {username : uName, password : pWord, email: eMail},
-					    contentType		: "application/json; charset=utf-8",
-					    dataType		: "jsonp",
-					    jsonp			: "callback",
-					    jsonpCallback	: "jsonpCallbackfunction",
-					    success    		: function(data) {
-					    	navigator.notification.alert(data, null, '', 'OK');
-					    },
-					    error      		: function(xhr, ajaxOptions, thrownErrorw) {
-					        navigator.notification.alert('Some error occurred. Please try again later.', null, '', 'OK');        
-					    }
-					});
-			    }
-		    }
-			else {
-				navigator.notification.alert('Password does not match.', null, 'ERROR', 'OK');
-			}
-		}
-		else {
-			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'OK');
-		}
-	});
+// Action For Home Page
+$("#Home").on("pageshow", function(e) {
+    // Do something on Home Page show
+    if (!App.testing_on_desktop) {
+    	App.feature.storage.selectData();
+    }
+    else {
+    	var fName = App.data.readLocalStorage('fullname');
+    	if(fName != null) {
+    		App.display.welcomeNote.UserLoggedIn(fName);
+    	}
+    }
 });
 
-function userRegistrationDisplay() {
-	document.getElementById('userRegistrationSection').setAttribute('style', 'display: block !important;');
-	document.getElementById('userLoginLink').setAttribute('style', 'display: block !important;');
+// Action For Device Info Page
+$("#DeviceInfo").on("pageshow", function(e) {
+	$('#device-details').css("display","none");
 	
-	document.getElementById('userLoginSection').setAttribute('style', 'display: none !important;');
-	document.getElementById('userRegistrationLink').setAttribute('style', 'display: none !important;');
-}
+    App.feature.deviceInfo.showData();
+});
 
-function userLoginDisplay() {
-	document.getElementById('userLoginSection').setAttribute('style', 'display: block !important;');
-	document.getElementById('userRegistrationLink').setAttribute('style', 'display: block !important;');
+// Action For Accelerometer Page
+$("#Accelerometer").on("pageshow", function(e) {
+    $('#accelerometer-details').css("display","none");
+    
+    App.feature.accelerometer.startService();
+    
+    $(document).on('click', '#toogle-accelerometer', function() {
+        App.feature.accelerometer.toogleAccelerometer();
+    });
+});
+
+// Action For Camera Page
+$("#Camera").on("pageshow", function(e) {
+    App.feature.camera.startService();
+    
+    $('#img-preview').css({
+    	"width":"300px",
+    	"visibility":"hidden",
+    	"display":"none"
+	});
 	
-	document.getElementById('userRegistrationSection').setAttribute('style', 'display: none !important;');
-	document.getElementById('userLoginLink').setAttribute('style', 'display: none !important;');
-}
+	$(document).on('click', '#capture-photo', function() {
+        App.feature.camera.capturePhoto();
+    });
+	
+	$(document).on('click', '#view-photoAlbum', function() {
+        App.feature.camera.openPhotoAlbum();
+    });
+});
+
+// Action For Contacts Page
+$("#Contacts").on("pageshow", function(e) {
+    App.feature.contacts.startService();
+});
+
+// Action For Geolocation Page
+$("#Geolocation").on("pageshow", function(e) {
+    $('#geolocation-details').css("display","none");
+    
+    App.feature.geolocation.startService();
+    
+    $(document).on('click', '#toogle-geolocation', function() {
+        App.feature.geolocation.toogleGeolocation();
+    });
+});
+
+// Action For Media Page
+$("#Media").on("pageshow", function(e) {
+	$('#audio-position').css({
+    	"visibility":"hidden",
+    	"display":"none"
+	});
+    $(document).on('click', '#rec-audio', function() {
+        App.feature.media.recordAudio();
+    });
+});
