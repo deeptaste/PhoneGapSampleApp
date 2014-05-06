@@ -126,7 +126,7 @@
 				<div class="main-frame">
 					<p id="device-status-bar">Loading device properties...</p>
 					
-					<table id="device-details"> 
+					<table id="device-details" style="display: none;"> 
 						<tr><th>Model Name : </th><td id="device-model">&nbsp;</td></tr> 
 						<tr><th>Device UUID : </th><td id="device-uuid">&nbsp;</td></tr>  
 						<tr><th>Platform : </th><td id="device-platform">&nbsp;</td></tr>   
@@ -177,7 +177,7 @@
 					</div>
 					<div class="feature-info">
 						<p id="accelerometer-status-bar">Waiting for accelerometer...</p>
-						<table id="accelerometer-details" class="tbl-info"> 
+						<table id="accelerometer-details" class="tbl-info" style="display: none;"> 
 							<tr><th>X-Val : </th><td id="xVal">&nbsp;</td></tr> 
 							<tr><th>Y-Val : </th><td id="yVal">&nbsp;</td></tr> 
 							<tr><th>Z-Val : </th><td id="zVal">&nbsp;</td></tr>  
@@ -186,7 +186,7 @@
 						
 				    </div>
 				    <div class="btn-frame">
-						<div id="toogle-accelerometer" class="custom-btn">Stop Accelerometer</div>
+						<div id="toogle-accelerometer" class="custom-btn" onclick="App.feature.accelerometer.toogleAccelerometer();">Stop Accelerometer</div>
 				    </div>
 				</div>
 			</div>
@@ -222,11 +222,11 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div id="img-frame" class="img-frame">
-						<img id="img-preview" src="" />
+						<img id="img-preview" src="" style="width: 300px;visibility: hidden;display: none;" />
 					</div>
 					<div class="btn-frame">
-						<div class="custom-btn" id="capture-photo">Capture Photo</div>
-					    <div class="custom-btn" id="view-photoAlbum">From Photo Album</div>
+						<div class="custom-btn" id="capture-photo" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
+					    <div class="custom-btn" id="view-photoAlbum" onclick="App.feature.camera.openPhotoAlbum();">From Photo Album</div>
 				    </div>
 				</div>
 			</div>
@@ -264,7 +264,7 @@
 					<div id="map-frame"><label>Map</label></div>
 					<div class="feature-info">
 						<p id="geolocation-status-bar">Finding location...</p>
-						<table id="geolocation-details" class="tbl-info"> 
+						<table id="geolocation-details" class="tbl-info" style="display: none;"> 
 							<tr><th>Latitude : </th><td id="lat">&nbsp;</td></tr> 
 							<tr><th>Longitude : </th><td id="lng">&nbsp;</td></tr> 
 							<tr><th>Altitude : </th><td id="alt">&nbsp;</td></tr>  
@@ -272,7 +272,7 @@
 						</table>
 				    </div>
 				    <div class="btn-frame">
-						<div id="toogle-geolocation" class="custom-btn">Stop Watching</div>
+						<div id="toogle-geolocation" class="custom-btn" onclick="App.feature.geolocation.toogleGeolocation();">Stop Watching</div>
 				    </div>
 				</div>
 			</div>
@@ -346,10 +346,10 @@
 					<div>
 						<p id="media-info">Record your voice...</p>
 						<img id="img-microphone" src="css/images/microphone-not-recording.png"/>
-						<p id="audio-position">&nbsp;</p>
+						<p id="audio-position" style="visibility: hidden;display: none;">&nbsp;</p>
 					</div>
 					<div class="btn-frame">
-						<div class="custom-btn" id="rec-audio">Record Audio</div>
+						<div class="custom-btn" id="rec-audio" onclick="App.feature.media.recordAudio();">Record Audio</div>
  						<div class="custom-btn" id="playback-rec">Playback</div>
 				    </div>
 				</div>
@@ -446,68 +446,24 @@
 		<script charset="utf-8" src="js/fastClick.js"></script>
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
 		<script>
-			// Action For Device Info Page
 			$("#DeviceInfo").on("pageshow", function(e) {
-				$('#device-details').css("display","none");
-				
-			    App.feature.deviceInfo.showData();
+				App.feature.deviceInfo.showData();
 			});
 			
-			// Action For Accelerometer Page
 			$("#Accelerometer").on("pageshow", function(e) {
-			    $('#accelerometer-details').css("display","none");
-			    
 			    App.feature.accelerometer.startService();
-			    
-			    $(document).on('click', '#toogle-accelerometer', function() {
-			        App.feature.accelerometer.toogleAccelerometer();
-			    });
 			});
 			
-			// Action For Camera Page
 			$("#Camera").on("pageshow", function(e) {
 			    App.feature.camera.startService();
-			    
-			    $('#img-preview').css({
-			    	"width":"300px",
-			    	"visibility":"hidden",
-			    	"display":"none"
-				});
-				
-				$(document).on('click', '#capture-photo', function() {
-			        App.feature.camera.capturePhoto();
-			    });
-				
-				$(document).on('click', '#view-photoAlbum', function() {
-			        App.feature.camera.openPhotoAlbum();
-			    });
 			});
 			
-			// Action For Contacts Page
 			$("#Contacts").on("pageshow", function(e) {
 			    App.feature.contacts.startService();
 			});
 			
-			// Action For Geolocation Page
 			$("#Geolocation").on("pageshow", function(e) {
-			    $('#geolocation-details').css("display","none");
-			    
 			    App.feature.geolocation.startService();
-			    
-			    $(document).on('click', '#toogle-geolocation', function() {
-			        App.feature.geolocation.toogleGeolocation();
-			    });
-			});
-			
-			// Action For Media Page
-			$("#Media").on("pageshow", function(e) {
-				$('#audio-position').css({
-			    	"visibility":"hidden",
-			    	"display":"none"
-				});
-			    $(document).on('click', '#rec-audio', function() {
-			        App.feature.media.recordAudio();
-			    });
 			});
 		</script>
 	</body>
