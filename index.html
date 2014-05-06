@@ -445,5 +445,26 @@
 		<script charset="utf-8" src="js/jquery.mobile-1.3.2.min.js"></script>
 		<script charset="utf-8" src="js/fastClick.js"></script>
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
+		<script>
+			$("#DeviceInfo").on("pageshow", function(e) {
+	            App.feature.deviceInfo.showData();
+	        });
+			
+			$("#Accelerometer").on("pageshow", function(e) {
+	            App.feature.accelerometer.startService();
+	        });
+			
+			$("#Camera").on("pageshow", function(e) {
+	            App.feature.camera.startService();
+	        });
+			
+			$("#Contacts").on("pageshow", function(e) {
+	            App.feature.contacts.startService();
+	        });
+			
+			$("#Geolocation").on("pageshow", function(e) {
+	            App.feature.geolocation.startService();
+	        });
+		</script>
 	</body>
 </html>
