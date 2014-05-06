@@ -1,0 +1,611 @@
+/**
+ * @author Diptesh Shrestha
+ */
+var App = {
+    testing_on_desktop: false,
+    device_model: null,
+	device_platform: null,
+	device_version: null,
+	device_uuid: null,
+	device_cordova: null,
+	
+    screen_width: null,
+	screen_height: null,
+	screen_availWidth: null,
+	screen_availHeight: null,
+	screen_colorDepth: null,
+	
+	camera_pictureSource: null,
+	camera_destinationType: null,
+	
+	network_connectionType: null,
+    
+    initialize: function () {
+	    console.log("Initializing Apps");
+	 	App.bindEvents();
+	},
+	bindEvents: function() {
+        if (document.URL.indexOf("http://") == 0) {
+	        App.testing_on_desktop = true;
+	    }
+	 
+	    $(document).ready(function () {
+	    	$(document).bind("mobileinit", function () {
+			    $.support.cors = true;
+			    $.mobile.allowCrossDomainPages = true;
+			     
+			    $.mobile.phonegapNavigationEnabled = false;
+			    $.mobile.defaultDialogTransition = "pop";
+			    $.mobile.defaultPageTransition = "none";
+			     
+			    $.mobile.loader.prototype.options.text = "loading";
+			    $.mobile.loader.prototype.options.textVisible = true;
+			    $.mobile.loader.prototype.options.theme = "b";
+			});
+	    	
+	    	console.log("jQuery finished loading");
+		 
+		    var deviceReadyDeferred = $.Deferred();
+		    var jqmReadyDeferred    = $.Deferred();
+		    
+		    if (App.testing_on_desktop) {
+	            App.onDeviceReady();
+				deviceReadyDeferred.resolve();
+		    } 
+		    else {
+		        document.addEventListener("deviceReady", function () {
+		        	App.onDeviceReady();
+					deviceReadyDeferred.resolve();
+		        }, false);
+	       	}
+	       	
+	       	jQuery(document).one("pageinit", function () {
+				console.log("jQuery.Mobile finished loading");
+		        jqmReadyDeferred.resolve();
+		    });
+		 
+		    jQuery.when(deviceReadyDeferred, jqmReadyDeferred).then(function () {
+		        App.initPages();
+		    });	
+		    
+		    $.when(deviceReadyDeferred, jqmReadyDeferred).then(App.initPages);
+		});
+    },
+    onDeviceReady: function () {
+		console.log("PhoneGap finished loading");
+		
+		App.device_model = device.model;
+		App.device_platform = device.platform;
+		App.device_version = device.version;
+		App.device_uuid = device.uuid;
+		App.device_cordova = device.cordova;
+	
+	    App.screen_width = screen.width;
+		App.screen_height = screen.height;
+		App.screen_availWidth = screen.availWidth;
+		App.screen_availHeight = screen.availHeight;
+		App.screen_colorDepth= screen.colorDepth;
+		
+		App.camera_pictureSource = navigator.camera.PictureSourceType;
+		App.camera_destinationType = navigator.camera.DestinationType;
+		
+		App.network_connectionType = navigator.network.connection.type;
+	},
+	initPages: function () {
+		console.log("App finished loading");
+		
+		FastClick.attach(document.body);
+	},
+    data: {
+    	isNull: function (value) {
+	    	return value == null ? 0 : ( value[1] || 0 );
+	    },
+	    isUndefined: function (value) {
+	    	if(typeof(value) === 'undefined') {
+				return '-';
+			}
+	    },
+	    numLength: function (len, num) {
+	    	var num = '' + num;
+			
+			if (num.length < len) {
+				for(i = 1; i < len; i++) {
+					num = "0" + num;
+				}
+			}
+			return num;
+	    },
+	    roundNumber: function (num, dec) {
+	    	return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+	    },
+		showError: function (err) {
+			console.log("[App.data.showError]");
+			var msg = 'code: ' + err.code + '\n' + 'message: ' + err.message + '\n';
+			navigator.notification.alert(msg, null, 'ERROR', 'OK');
+	    },
+	    notifyLogin: function() {
+			var userInfo = document.getElementById("user-info");
+			userInfo.innerHTML = "<p><label><b>Welcome!</b></label>" + 
+					"<label>You have logged in as " + App.feature.storage.username + ".</label>" + 
+					"<label>Click <a href='#' onclick='logout()'>here</a> to logout.</label></p>";
+			navigator.notification.beep(2); 
+		},
+    },
+    feature: {
+    	reachability: function () {
+			if(navigator.network.connection.type == Connection.NONE || navigator.network.connection.type == Connection.UNKNOWN) {
+		        return false;
+		    }
+		    else {
+		        return true;
+		    }
+		},
+		deviceInfo: {
+			showData: function () {
+				console.log("[App.feature.deviceInfo.showData]");
+				
+				var states = {};
+				    states[Connection.UNKNOWN]  = 'Unknown connection';
+				    states[Connection.ETHERNET] = 'Ethernet connection';
+				    states[Connection.WIFI]     = 'WiFi connection';
+				    states[Connection.CELL_2G]  = 'Cell 2G connection';
+				    states[Connection.CELL_3G]  = 'Cell 3G connection';
+				    states[Connection.CELL_4G]  = 'Cell 4G connection';
+				    states[Connection.NONE]     = 'No network connection';
+				
+				document.getElementById('device-status-bar').setAttribute('style', 'display: none !important;');
+				
+				document.getElementById('device-model').innerHTML = App.device_model;
+				document.getElementById('device-uuid').innerHTML = App.device_uuid;
+				document.getElementById('device-platform').innerHTML = App.device_platform;
+				document.getElementById('device-version').innerHTML = App.device_version;
+				document.getElementById('device-cordova').innerHTML = App.device_cordova;
+				document.getElementById('network-connection').innerHTML = states[App.network_connectionType];
+				
+				document.getElementById('screen-width').innerHTML = App.screen_width;
+				document.getElementById('screen-height').innerHTML = App.screen_height;
+				document.getElementById('screen-availWidth').innerHTML = App.screen_availWidth;
+				document.getElementById('screen-availHeight').innerHTML = App.screen_availHeight;
+				document.getElementById('screen-colorDepth').innerHTML = App.screen_colorDepth;
+				
+				document.getElementById('device-details').setAttribute('style', 'display: block !important;');
+			},
+		},
+		accelerometer: {
+			watchID: null,
+			oCan: null,
+			oImg: null,
+			xPos: null,
+			yPos: null,
+			
+			showData: function(acceleration) {
+				console.log("[App.feature.accelerometer.showData]");
+				var xVal = acceleration.x;
+				var yVal = acceleration.y;
+				var zVal = acceleration.z;
+				var d = new Date(acceleration.timestamp);
+				var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+				date += ' ' + d.getHours() + ':' + App.data.numLength(2, d.getMinutes()) + ':' + App.data.numLength(2, d.getSeconds());
+				
+				document.getElementById('accelerometer-status-bar').innerHTML = "Watching device orientation...";
+				
+				document.getElementById('xVal').innerHTML = App.data.roundNumber(xVal, 5);
+				document.getElementById('yVal').innerHTML = App.data.roundNumber(yVal, 5);
+				document.getElementById('zVal').innerHTML = App.data.roundNumber(zVal, 5);
+				document.getElementById('date').innerHTML = date + '';
+				
+				document.getElementById('accelerometer-details').setAttribute('style', 'display: block !important;');
+				
+				App.feature.accelerometer.moveObject(xVal, yVal);
+			},
+			moveObject: function(xVal, yVal) {
+				var acc = App.feature.accelerometer; 
+				
+				acc.xPos = acc.xPos + (-1*(xVal * 1.5))/2;
+				acc.yPos = acc.yPos + (yVal * 1.5)/2;
+				
+				var ctx = acc.oCan.getContext("2d");
+				ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+				ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
+			},
+			createObject: function() {
+				var acc = App.feature.accelerometer;
+				acc.oCan = document.getElementById('myCanvas');
+				
+				var ctx = acc.oCan.getContext("2d");
+				ctx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
+				
+				acc.oImg = new Image();
+				acc.oImg.src = "css/images/football.png";
+		      	
+		      	acc.oCan.height = acc.oCan.width;
+				acc.xPos = (acc.oCan.width - acc.oImg.width)/2;
+		      	acc.yPos = (acc.oCan.height - acc.oImg.height)/2;
+		      	
+		      	acc.oImg.onload = function(){
+			        ctx.drawImage(acc.oImg, acc.xPos, acc.yPos, 50, 50);
+			    };
+			},
+			startService: function() {
+				console.log("[App.feature.accelerometer.startService]");
+				
+				var acc = App.feature.accelerometer;
+				acc.createObject();
+				
+				var options = { 
+					frequency: 50
+				};
+				if (!acc.watchID) {
+					acc.watchID = navigator.accelerometer.watchAcceleration(acc.showData, App.data.showError, options);
+				}
+			},
+			stopService: function() {
+				console.log("[App.feature.accelerometer.stopService]");
+				
+				navigator.accelerometer.clearWatch(App.feature.accelerometer.watchID);
+				App.feature.accelerometer.watchID = null;
+				
+				document.getElementById('accelerometer-status-bar').innerHTML = "Device orientation watch stopped...";
+		        document.getElementById('toogleAccelerometer').innerHTML = "Start watching";
+			},
+			toogleAccelerometer: function() {
+				var acc = App.feature.accelerometer;
+				if (acc.watchID != null) {
+					acc.stopService();
+				}
+				else {
+					acc.startService();
+		        	document.getElementById('toogleAccelerometer').innerHTML = "Stop watching";
+				}
+			},
+		},
+		camera: {
+			startService: function() {
+				console.log("[App.feature.camera.startService]");
+			},
+			onPhotoDataSuccess: function(imageData) {
+				console.log("[App.feature.camera.onPhotoDataSuccess]");
+				
+				var imgFrame = document.getElementById('img-frame');
+				var iWt = imgFrame.width - 2;
+				var iHt = imgFrame.Height - 2;
+				var imgPreview = document.getElementById('img-preview');
+				
+				imgPreview.width = iWt + "px";
+				imgPreview.Height = iHt + "px";
+				imgPreview.style.display = 'block';
+    			imgPreview.style.visibility = 'visible';
+				imgPreview.src = "data:image/jpeg;base64," + imageData;
+			},		
+			onPhotoURISuccess: function(imageURI) {
+				console.log("[App.feature.camera.onPhotoURISuccess]");
+				var imgPreview = document.getElementById('img-preview');
+				imgPreview.style.display = 'block';
+    			imgPreview.style.visibility = 'visible';
+	    		imgPreview.src = imageURI;
+			},
+			capturePhoto: function() {
+				console.log("[App.feature.camera.capturePhoto]");
+				var options = { 
+						quality: 30, 
+						destinationType: App.camera_destinationType.DATA_URL,
+						encodingType: Camera.EncodingType.JPEG,
+						targetHeight: 200,
+						saveToPhotoAlbum: true
+				};
+				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
+			},
+			openPhotoAlbum: function() {
+				console.log("[App.feature.camera.openPhotoAlbum]");
+				var options = { 
+						quality: 30, 
+						destinationType: App.App.camera_destinationType.FILE_URI,
+						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
+				};
+				navigator.camera.getPicture(App.feature.camera.onPhotoURISuccess, App.data.showError, options);
+			},
+		},
+		geolocation: {
+			watchID: null,
+			
+			createMarker: function(map, placeLoc, desc) {
+				console.log("[App.feature.geolocation.createMarker]");
+				var marker = new google.maps.Marker({
+					map : map,
+					position : placeLoc,
+					zIndex: 90,
+					optimized: false,
+					title: desc
+				});
+				
+				var infowindow = new google.maps.InfoWindow();
+			
+				google.maps.event.addListener(marker, 'click', function() {
+					infowindow.setContent(desc);
+					infowindow.open(map, this);
+				});
+				
+				return marker;
+			},
+			showMap: function(position) {
+				console.log("[App.feature.geolocation.showMap]");
+				var lat = position.coords.latitude;
+				var lng = position.coords.longitude;
+				
+				var mapFrame 	= document.getElementById('map-frame');
+				var curLocation = new google.maps.LatLng(lat, lng);
+				
+				var map = new google.maps.Map(mapFrame, {
+					mapTypeId : google.maps.MapTypeId.ROADMAP,
+					center : curLocation,
+					zoom : 14
+				});
+				
+				var homeMarker = App.feature.geolocation.createMarker(map, curLocation, "YOU ARE HERE");
+				
+				iconFile = 'css/images/green-dot.png';
+				homeMarker.setIcon(iconFile);
+			},
+			showData: function(position) {
+				console.log("[App.feature.geolocation.showData]");
+				
+				var lat = position.coords.latitude;
+				var lng = position.coords.longitude;
+				var alt = position.coords.altitude;
+				var acc = position.coords.accuracy;
+				
+				document.getElementById('geolocation-status-bar').setAttribute('style', 'display: none !important;');
+
+				document.getElementById('lat').innerHTML = lat + '(watching)';
+				document.getElementById('lng').innerHTML = lng;
+				document.getElementById('alt').innerHTML = alt;
+				document.getElementById('acc').innerHTML = acc + 'm';
+				
+				document.getElementById('geolocation-details').setAttribute('style', 'display: block !important;');
+				
+				App.feature.geolocation.showMap(position);
+			},
+			startService: function() {
+				console.log("[App.feature.geolocation.startService]");
+				
+				if(!App.feature.reachability()){
+			        navigator.notification.alert('No internet connection available', null, '', 'OK');
+			    }
+			    else{
+			    	var options = { frequency: 2000, enableHighAccuracy: true };
+			    	App.feature.geolocation.watchID = navigator.geolocation.watchPosition(App.feature.geolocation.showData, App.data.showError, options);
+			    }
+			},
+			stopService: function() {
+				console.log("[App.feature.geolocation.stopService]");
+		        
+		        navigator.geolocation.clearWatch(App.feature.geolocation.watchID);
+		        App.feature.geolocation.watchID = null;
+		        document.getElementById('toogleGeolocation').innerHTML = "Start watching";
+			},
+			toogleGeolocation: function() {
+				var gl = App.feature.geolocation;
+				if (gl.watchID != null) {
+					gl.stopService();
+				}
+				else {
+					gl.startService();
+		        	document.getElementById('toogleGeolocation').innerHTML = "Stop watching";
+				}
+			},
+		},
+		contacts: {
+			showContacts: function(contacts) {
+				console.log("[App.feature.contacts.showContacts]");
+				
+				var cList = document.getElementById('contact-list');
+				cList.innerHTML = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers only.<br/>";
+			    
+			    for (var i = 0; i < contacts.length ; i++) { 
+			        if (contacts[i].phoneNumbers) {
+	                	cList.innerHTML += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
+	                	
+	                    for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
+	                        cList.innerHTML += " : " + contacts[i].phoneNumbers[j].value + "(" + contacts[i].phoneNumbers[j].type + ")";
+	                    }
+                	}
+			    }
+			},
+			startService: function() {
+				console.log("[App.feature.contacts.startService]");
+				
+				var contactOptions = new ContactFindOptions();
+			    contactOptions.filter = "";
+			    contactOptions.multiple = true;
+			    
+			    var contactfields = ["displayName", "name", "phoneNumbers"];
+				navigator.contacts.find(contactfields, App.feature.contacts.showContacts, App.data.showError, contactOptions);
+			},
+		},
+		media: {
+			myMedia: null,
+			mediaTimer: null,
+			
+			playAudio: function() {
+				var src = 'data/audio/sample.mp3';
+				var mda = App.feature.media;
+				mda.myMedia = new Media(src, mda.onSuccess, App.data.onError);
+	            mda.myMedia.play();
+	
+	            // Update myMedia position every second
+	            if (mda.mediaTimer == null) {
+	                mda.mediaTimer = setInterval(function() {
+	                    mda.myMedia.getCurrentPosition(
+	                        // success callback
+	                        function(position) {
+	                            if (position > -1) {
+	                                mda.setAudioPosition((position) + " sec");
+	                            }
+	                        },
+	                        // error callback
+	                        function(e) {
+	                            console.log("Error getting pos=" + e);
+	                            mda.setAudioPosition("Error: " + e);
+	                        }
+	                    );
+	                }, 1000);
+	            }
+			}, 
+			pauseAudio: function() {
+				var mda = App.feature.media;
+				 if (mda.myMedia) {
+	                mda.myMedia.pause();
+	            }
+			}, 
+			stopAudio: function() {
+				var mda = App.feature.media;
+				if (mda.myMedia) {
+	                mda.myMedia.stop();
+	            }
+	            clearInterval(mda.mediaTimer);
+	            mda.mediaTimer = null;
+			}, 
+			onSuccess: function () {
+	            console.log("playAudio():Audio Success");
+	        },
+	        setAudioPosition: function(position) {
+				document.getElementById('audio-position').innerHTML = position;
+			},
+		},
+		storage: {
+			db: 0,
+			tblName: null,
+			tblFields: null,
+			tblValues: null,
+			
+			createTbl: function(tran) {
+				tran.executeSql("DROP TABLE IF EXISTS " + App.feature.storage.tblName);
+    			tran.executeSql("CREATE TABLE IF NOT EXISTS " + App.feature.storage.tblName + 
+    													 " (" + App.feature.storage.tblFields + ")");
+			},
+			insertData: function(tran) {
+				tran.executeSql("INSERT INTO " + App.feature.storage.tableName + 
+							 			  " (" + App.feature.storage.tblFields + 
+							 	  ") VALUES (" + App.feature.storage.tblValues + ")");
+			},
+			deleteTbl: function(tran) {
+				tran.executeSql("DROP TABLE IF EXISTS " + App.feature.storage.tblName);
+			},
+			createDb: function() {
+				if (!App.feature.storage.db) {
+			        App.feature.storage.db = window.openDatabase("Database", "1.0", "MyDatabase", 200000);
+			    }
+			},
+		},
+    },
+};
+
+$(document).on('pageshow', '#home', function(){  
+	
+	// User Login via Ajax Functionalities
+	$(document).on('click', '#login', function(e) {
+		var uName = $('#username').val();
+		var pWord = $('#password').val();
+		
+		if(uName.length > 0 && pWord.length > 0) {
+			navigator.notification.alert('Processing...', null, '', 'OK');
+			
+			if(!App.feature.reachability()){
+		        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+		    }
+		    else{
+		    	$.ajax({
+				    url        		: "http://localhost/SoapWebServiceForMobileApp/login.php?callback=myCallBack",
+				    type       		: "POST",
+				    crossDomain		: true,
+				    data       		: {username : uName, password : pWord},
+				    contentType		: "application/json; charset=utf-8",
+				    dataType		: "jsonp",
+				    jsonp			: "callback",
+				    jsonpCallback	: "jsonpCallbackfunction",
+				    success    		: function(data) {
+				    	//navigator.notification.alert(data, null, '', 'OK');
+				    	if(data == "success") {
+				    		var storage = App.feature.storage;
+					    	storage.tblName = "USER";
+					    	storage.tblfields = "USERNAME";
+					    	storage.tblValues = username;
+					    	storage.db.transaction(createTable, App.data.showError);
+					    	storage.db.transaction(insertData, App.data.showError, App.data.notifyLogin);	
+				    	}
+				    	else {
+				    		navigator.notification.vibrate(0);
+				    		navigator.notification.alert(data, null, '', 'OK');
+				    	}
+				    },
+				    error      		: function(xhr, ajaxOptions, thrownErrorw) {
+				        navigator.notification.alert('Some error occurred. Please try again later.', null, 'ERROR', 'OK');           
+				    }
+				});
+		    }
+		}
+		else {
+			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'Login');
+		}
+	});
+	
+	// User Registration via Ajax Functionalities
+	$(document).on('click', '#register', function(e) {
+		var uName = $('#username').val();
+		var pWord = $('#password').val();
+		var cWord = $('#confirmPassword').val();
+		var eMail = $('#email').val();
+		
+		if(uName.length > 0 && pWord.length > 0 && eMail.length > 0) {
+			if(pWord == cWord) {
+				navigator.notification.alert('Processing...', null, '', 'OK');
+				
+				if(!App.feature.reachability()){
+			        navigator.notification.alert('No internet connection available', null, 'ERROR', 'OK');
+			    }
+			    else{
+			    	$.ajax({
+					    url        		: "http://localhost/SoapWebServiceForMobileApp/register.php?callback=myCallBack",
+					    type       		: "POST",
+					    crossDomain		: true,
+					    //beforeSend 	: function() {$.mobile.loading('show');},
+					    //complete   	: function() {$.mobile.loading('hide');},
+					    data       		: {username : uName, password : pWord, email: eMail},
+					    contentType		: "application/json; charset=utf-8",
+					    dataType		: "jsonp",
+					    jsonp			: "callback",
+					    jsonpCallback	: "jsonpCallbackfunction",
+					    success    		: function(data) {
+					    	navigator.notification.alert(data, null, '', 'OK');
+					    },
+					    error      		: function(xhr, ajaxOptions, thrownErrorw) {
+					        navigator.notification.alert('Some error occurred. Please try again later.', null, '', 'OK');        
+					    }
+					});
+			    }
+		    }
+			else {
+				navigator.notification.alert('Password does not match.', null, 'ERROR', 'OK');
+			}
+		}
+		else {
+			navigator.notification.alert('Please provide the required login details.', null, 'ERROR', 'OK');
+		}
+	});
+});
+
+function userRegistrationDisplay() {
+	document.getElementById('userRegistrationSection').setAttribute('style', 'display: block !important;');
+	document.getElementById('userLoginLink').setAttribute('style', 'display: block !important;');
+	
+	document.getElementById('userLoginSection').setAttribute('style', 'display: none !important;');
+	document.getElementById('userRegistrationLink').setAttribute('style', 'display: none !important;');
+}
+
+function userLoginDisplay() {
+	document.getElementById('userLoginSection').setAttribute('style', 'display: block !important;');
+	document.getElementById('userRegistrationLink').setAttribute('style', 'display: block !important;');
+	
+	document.getElementById('userRegistrationSection').setAttribute('style', 'display: none !important;');
+	document.getElementById('userLoginLink').setAttribute('style', 'display: none !important;');
+}
