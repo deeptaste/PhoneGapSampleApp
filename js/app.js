@@ -385,7 +385,6 @@ var App = {
 			createObject: function() {
 				var acc = App.feature.accelerometer;
 				acc.oCan = document.getElementById('myCanvas');
-				
 				acc.oCtx = acc.oCan.getContext("2d");
 				acc.oCtx.clearRect(0, 0, acc.oCan.width, acc.oCan.height);
 				
@@ -616,8 +615,8 @@ var App = {
 					});
 					
 					$('#playback-rec').css({
-				    	"visibility":"visible",
-				    	"display":"block"
+				    	"visibility":"hidden",
+				    	"display":"none"
 					});
 			        
 			        mda.mediaRec.play();
@@ -643,7 +642,7 @@ var App = {
 			    mda.mediaRec = new Media(src, mda.recSuccess, App.data.showError);
 				
 				mda.mediaRec.startRecord();
-				$('#media-info').html("Recording...");
+				$('#media-info').html("Recording (total 10 sec)...");
 				$('#img-microphone').attr('src','css/images/microphone-recording.png');
 				
 				$('#audio-position').css({
@@ -651,12 +650,12 @@ var App = {
 			    	"display":"block"
 				});
 				
-				var recTime = 10;
-				$('#audio-position').html(recTime + " sec (remaining)");
+				var recTime = 0;
+				$('#audio-position').html(recTime + " sec");
 		        var recInterval = setInterval(function() {
-		            recTime = recTime - 1;
-		            $('#audio-position').html(recTime + " sec (remaining)");
-		            if (recTime <= 0) {
+		            recTime = recTime + 1;
+		            $('#audio-position').html(recTime + " sec");
+		            if (recTime >= 10) {
 		                clearInterval(recInterval);
 		                mda.mediaRec.stopRecord();
 		            }
