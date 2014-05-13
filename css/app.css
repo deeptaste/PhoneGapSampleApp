@@ -64,21 +64,24 @@ body{
 }
 
 #device-details {
+	width: 100%;
 	color: #384D5A;
 	font-size: 12px;
 	font-weight: normal;
 	font-family: Georgia, Verdana, Trebuchet MS;
 	padding: 10px 0 10px 0;
+	table-layout: fixed;
 }
 
 #device-details tr {
-	margin-bottom: 2px;
+	margin-bottom: 2px; 
 }
 
 #device-details th {
 	text-align: right;
 	width: 50%;
 	font-weight: bold;
+	vertical-align: top;
 }
 
 #device-details td {

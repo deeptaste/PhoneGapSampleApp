@@ -4,11 +4,11 @@
 <widget xmlns     		= "http://www.w3.org/ns/widgets"
         xmlns:gap 		= "http://phonegap.com/ns/1.0"
     	xmlns:android   = "http://schemas.android.com/apk/res/android"
-        id        		= "com.phonegap.myDemoApp"
+        id        		= "com.diptesh.phonegapdemoapp"
 		version   		= "1.0.0"
         versionCode 	= "10" >
 
-    <name>Dips App</name>
+    <name>PhoneGap Sample App</name>
 
     <description>
         This is a demo cross-platform mobile application built using 'Apache Cordova' and 'jQuery Mobile'. This mobile app test some of the mobile device features such as Accelerometer, Camera, Geolocation, and others. Also, the client-server architecture has been implemented for login and some other features.
