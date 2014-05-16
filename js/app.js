@@ -93,16 +93,19 @@ var App = {
 		
 		App.network_connectionType = navigator.network.connection.type;
 		
-		if (device.platform === 'iOS' && parseFloat(device.version) >= 7.0) {
-			$('.ui-header > *').css('margin-top', function (index, curValue) {
-				return parseInt(curValue, 10) + 20 + 'px';
-			});
-		}
+		//fixHeight();
 	},
 	initPages: function () {
 		console.log("App finished loading");
 		
 		FastClick.attach(document.body);
+	},
+	fixHeight: function () {
+		if (device.platform === 'iOS' && parseFloat(device.version) >= 7.0) {
+			$('.ui-header > *').css('margin-top', function (index, curValue) {
+				return parseInt(curValue, 10) + 20 + 'px';
+			});
+		}
 	},
     data: {
     	isNull: function (value) {
