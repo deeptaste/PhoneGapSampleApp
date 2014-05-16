@@ -189,7 +189,7 @@ var App = {
 				    }
 				    else{
 				    	$.ajax({
-						    url        		: "http://localhost/SoapWebServiceForMobileApp/login.php?callback=myCallBack",
+						    url        		: "http://myappserver.zymichost.com/login.php?callback=myCallBack",
 						    type       		: "POST",
 						    crossDomain		: true,
 						    data       		: {username : uName, password : pWord},
@@ -254,7 +254,7 @@ var App = {
 					    }
 					    else{
 					    	$.ajax({
-							    url        		: "http://localhost/SoapWebServiceForMobileApp/register.php?callback=myCallBack",
+							    url        		: "http://myappserver.zymichost.com/register.php?callback=myCallBack",
 							    type       		: "POST",
 							    crossDomain		: true,
 							    data       		: {fullname : fName, username : uName, password : pWord, email: eMail},
