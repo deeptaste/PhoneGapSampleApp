@@ -92,6 +92,10 @@ var App = {
 		App.camera_destinationType = navigator.camera.DestinationType;
 		
 		App.network_connectionType = navigator.network.connection.type;
+		
+		if (parseFloat(window.device.version) === 7.0) {
+			document.body.style.marginTop = "20px";
+	    }
 	},
 	initPages: function () {
 		console.log("App finished loading");
