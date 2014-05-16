@@ -437,7 +437,7 @@ var App = {
 			},
 			onPhotoDataSuccess: function(imageData) {
 				console.log("[App.feature.camera.onPhotoDataSuccess]");
-				
+				/*
 				var imgFrame = document.getElementById('img-frame');
 				var iWt = imgFrame.width - 2;
 				var iHt = imgFrame.Height - 2;
@@ -445,6 +445,7 @@ var App = {
 				
 				imgPreview.width = iWt + "px";
 				imgPreview.Height = iHt + "px";
+				*/
 				imgPreview.style.display = 'block';
     			imgPreview.style.visibility = 'visible';
 				imgPreview.src = "data:image/jpeg;base64," + imageData;
@@ -580,6 +581,11 @@ var App = {
 				console.log("[App.feature.contacts.showContacts]");
 				
 				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers (Max: 10 contacts only).<br/>";
+			    var len = contacts.length;
+			    
+			    if (len > 10) {
+			    	len = 10;
+			    }
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
 			        if (contacts[i].phoneNumbers) {
