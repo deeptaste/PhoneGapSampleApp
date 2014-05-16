@@ -470,6 +470,7 @@ var App = {
 						destinationType: App.camera_destinationType.DATA_URL,
 						encodingType: Camera.EncodingType.JPEG,
 						targetHeight: 250,
+						targetHeight: 250,
 						saveToPhotoAlbum: true
 				};
 				navigator.camera.getPicture(App.feature.camera.onPhotoDataSuccess, App.data.showError, options);
@@ -478,6 +479,8 @@ var App = {
 				console.log("[App.feature.camera.openPhotoAlbum]");
 				var options = { 
 						quality: 50, 
+						targetHeight: 250,
+						targetHeight: 250,
 						destinationType: App.camera_destinationType.FILE_URI,
 						sourceType: App.camera_pictureSource.SAVEDPHOTOALBUM 
 				};

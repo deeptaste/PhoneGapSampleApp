@@ -230,7 +230,7 @@
 			<div data-role="content" class="main-body">
 				<div class="main-frame">
 					<div id="img-frame" class="img-frame">
-						<img id="img-preview" src="" style="width: 300px;visibility: hidden;display: none;" />
+						<img id="img-preview" src="" style="width: 255px;height: 255px; visibility: hidden;display: none;" />
 					</div>
 					<div class="btn-frame">
 						<div class="custom-btn" id="capture-photo" onclick="App.feature.camera.capturePhoto();">Capture Photo</div>
@@ -476,36 +476,31 @@
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
 		<script>
 			$("#DeviceInfo").on("pageshow", function(e) {
-				//App.fixHeight();
 				App.feature.deviceInfo.showData();
 			});
 			
 			$("#Accelerometer").on("pageshow", function(e) {
-			    //App.fixHeight();
-				App.feature.accelerometer.startService();
+			    App.feature.accelerometer.startService();
 			});
 			
 			$("#Camera").on("pageshow", function(e) {
-			    //App.fixHeight();
-				App.feature.camera.startService();
+			    App.feature.camera.startService();
 			});
 			
 			$("#Contacts").on("pageshow", function(e) {
-			    //App.fixHeight();
-				App.feature.contacts.startService();
+			    App.feature.contacts.startService();
 			});
 			
 			$("#Geolocation").on("pageshow", function(e) {
-			    //App.fixHeight();
-				App.feature.geolocation.startService();
+			    App.feature.geolocation.startService();
 			});
 			
 			$("#Media").on("pageshow", function(e) {
-			    //App.fixHeight();
+			    // Do someting when loading this page
 			});
 			
 			$("#AboutThisApp").on("pageshow", function(e) {
-			    //App.fixHeight();
+			    // Do someting when loading this page
 			});
 		</script>
 	</body>
