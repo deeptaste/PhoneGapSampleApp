@@ -580,14 +580,14 @@ var App = {
 			showContacts: function(contacts) {
 				console.log("[App.feature.contacts.showContacts]");
 				
-				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers (Max: 10 contacts only).<br/>";
+				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers (Max: 15 contacts only).<br/>";
 			    var len = contacts.length;
 			    
-			    if (len > 10) {
-			    	len = 10;
+			    if (len > 15) {
+			    	len = 15;
 			    }
 			    
-			    for (var i = 0; i < contacts.length ; i++) { 
+			    for (var i = 0; i < len; i++) { 
 			        if (contacts[i].phoneNumbers) {
 	                	txtContactList += "<br/> [" + (i+1) + "] <strong>" + contacts[i].name.formatted + "</strong>";
 	                	
