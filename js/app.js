@@ -93,7 +93,7 @@ var App = {
 		
 		App.network_connectionType = navigator.network.connection.type;
 		
-		fixHeight();
+		//fixHeight();
 	},
 	initPages: function () {
 		console.log("App finished loading");
