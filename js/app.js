@@ -587,7 +587,7 @@ var App = {
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
 			        if (contacts[i].phoneNumbers) {
-	                	txtContactList += "<br/> [" + (i+1) + "] <strong>" + contacts[i].displayName + "</strong>";
+	                	txtContactList += "<br/> [" + (i+1) + "] <strong>" + contacts[i].name.formatted + "</strong>";
 	                	
 	                    for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
 	                        txtContactList += " : " + contacts[i].phoneNumbers[j].value + "(" + contacts[i].phoneNumbers[j].type + ")";
