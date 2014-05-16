@@ -476,23 +476,36 @@
 		<script charset="utf-8" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUV4-YgcCcTMrO5kZH9Bpxf7O39hpY5HU&sensor=true"></script>
 		<script>
 			$("#DeviceInfo").on("pageshow", function(e) {
+				App.fixHeight();
 				App.feature.deviceInfo.showData();
 			});
 			
 			$("#Accelerometer").on("pageshow", function(e) {
-			    App.feature.accelerometer.startService();
+			    App.fixHeight();
+				App.feature.accelerometer.startService();
 			});
 			
 			$("#Camera").on("pageshow", function(e) {
-			    App.feature.camera.startService();
+			    App.fixHeight();
+				App.feature.camera.startService();
 			});
 			
 			$("#Contacts").on("pageshow", function(e) {
-			    App.feature.contacts.startService();
+			    App.fixHeight();
+				App.feature.contacts.startService();
 			});
 			
 			$("#Geolocation").on("pageshow", function(e) {
-			    App.feature.geolocation.startService();
+			    App.fixHeight();
+				App.feature.geolocation.startService();
+			});
+			
+			$("#Media").on("pageshow", function(e) {
+			    App.fixHeight();
+			});
+			
+			$("#AboutThisApp").on("pageshow", function(e) {
+			    App.fixHeight();
 			});
 		</script>
 	</body>
