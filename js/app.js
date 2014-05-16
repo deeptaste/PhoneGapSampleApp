@@ -100,13 +100,6 @@ var App = {
 		
 		FastClick.attach(document.body);
 	},
-	fixHeight: function () {
-		if (device.platform === 'iOS' && parseFloat(device.version) >= 7.0) {
-			$('.ui-header > *').css('margin-top', function (index, curValue) {
-				return parseInt(curValue, 10) + 20 + 'px';
-			});
-		}
-	},
     data: {
     	isNull: function (value) {
 	    	return value == null ? 0 : ( value[1] || 0 );
@@ -586,7 +579,7 @@ var App = {
 			showContacts: function(contacts) {
 				console.log("[App.feature.contacts.showContacts]");
 				
-				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers only.<br/>";
+				var txtContactList = "<strong>" + contacts.length + "</strong> contacts found, but showing contacts with phone numbers (Max: 10 contacts only).<br/>";
 			    
 			    for (var i = 0; i < contacts.length ; i++) { 
 			        if (contacts[i].phoneNumbers) {
